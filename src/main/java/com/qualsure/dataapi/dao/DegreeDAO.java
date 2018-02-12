@@ -9,5 +9,5 @@ import com.qualsure.dataapi.model.Degree;
 @Repository
 public interface DegreeDAO extends MongoRepository<Degree, String>{
 
-	
+	//Degree findById(String id);
 }
