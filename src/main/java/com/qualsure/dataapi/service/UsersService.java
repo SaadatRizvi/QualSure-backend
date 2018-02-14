@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.qualsure.dataapi.dao.UsersDAO;
@@ -20,6 +21,9 @@ public class UsersService implements UserDetailsService {
 	
 	@Autowired
 	private UsersDAO usersDAO;
+
+	@Autowired
+	private BCryptPasswordEncoder bcryptEncoder;
 
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 		Users user = usersDAO.findByUsername(userId);
@@ -54,4 +58,10 @@ public class UsersService implements UserDetailsService {
 	public Users save(Users user) {
         return usersDAO.save(user);
     }
+	public Users addUser(Users user) {
+		user.setPassword(bcryptEncoder.encode(user.getPassword()));
+		usersDAO.insert(user);
+		return user;
+	}
+
 }

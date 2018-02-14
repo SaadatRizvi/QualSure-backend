@@ -46,8 +46,19 @@ public class DbSeeder implements CommandLineRunner {
 					"admin@nust.edu.pk","true","National University Of S&T"),
 			//password : "admin"					
 			new Users("3","admin","$2a$04$aOSd.znG7tUQSFTkHc07ZeN/mUI4GAXu6yxxeJ0qfxkmtQ0UbBvuy",new ArrayList<String>(Arrays.asList("USER","ADMIN")),
-					"admin@qualsure.com","true","QualSure Inc.")		
+					"admin@qualsure.com","true","QualSure Inc.")
+			/*
+			 "username":"lums",
+			 "password":"abc",
+			 "roles": [
+            			"USER"
+        			  ],
+			 "email":"admin@lums.edu.pk",
+			 "active":"true",
+			 "name":"Lahore University of M&S"
 			
+			
+			*/
 			));
 	@Override
 	public void run(String... arg0) throws Exception {

@@ -1,6 +1,9 @@
 package com.qualsure.dataapi.controller;
 
 
+import java.net.URI;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,19 +11,22 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.qualsure.dataapi.config.JwtTokenUtil;
 import com.qualsure.dataapi.model.AuthToken;
+import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.LoginUser;
 import com.qualsure.dataapi.model.Users;
 import com.qualsure.dataapi.service.UsersService;
 
 @RestController
-@RequestMapping("/token")
+@RequestMapping("")
 public class AuthenticationController {
 
     @Autowired
@@ -32,7 +38,7 @@ public class AuthenticationController {
     @Autowired
     private UsersService userService;
 
-    @RequestMapping(value = "/generate-token", method = RequestMethod.POST)
+    @RequestMapping(value = "/token/generate-token", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws AuthenticationException {
 
         final Authentication authentication = authenticationManager.authenticate(
@@ -46,5 +52,23 @@ public class AuthenticationController {
         final String token = jwtTokenUtil.generateToken(user);
         return ResponseEntity.ok(new AuthToken(token));
     }
+    
+    @RequestMapping(value="/signup", method = RequestMethod.POST)
+    public ResponseEntity<?> Signup(@RequestBody Users user) {
+    	Users newUser= userService.addUser(user);
+		 if (user == null)
+				return ResponseEntity.noContent().build();
+		 
+		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
+					"/{id}").buildAndExpand(newUser.getId()).toUri();
+
+			return ResponseEntity.created(location).build();
+		 
+	}
+    
+    @GetMapping("/users")
+	public List<Users> getAllUsers() {
+		return userService.findAll();
+	}
 
 }

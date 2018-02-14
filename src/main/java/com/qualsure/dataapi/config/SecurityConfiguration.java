@@ -60,7 +60,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 		http.authorizeRequests()
 			.antMatchers("/hello").permitAll()
-			.antMatchers("/token/*").permitAll()
+			.antMatchers("/token/*", "/signup").permitAll()
 			.anyRequest().authenticated()
             .and()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
@@ -76,21 +76,24 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	        return new BCryptPasswordEncoder();
 	    }
 	
-	private PasswordEncoder getPasswordEncoder() {
-		return new PasswordEncoder() {
-
-			@Override
-			public String encode(CharSequence charSequence) {
-				return charSequence.toString();
-			}
-
-			@Override
-			public boolean matches(CharSequence charSequence, String s) {
-				return true;
-			}
-			
-		};
-	}
+	 
+	 //use this when you dont want any encoding on password
+	 
+//	private PasswordEncoder getPasswordEncoder() {
+//		return new PasswordEncoder() {
+//
+//			@Override
+//			public String encode(CharSequence charSequence) {
+//				return charSequence.toString();
+//			}
+//
+//			@Override
+//			public boolean matches(CharSequence charSequence, String s) {
+//				return true;
+//			}
+//			
+//		};
+//	}
 
 
 	
