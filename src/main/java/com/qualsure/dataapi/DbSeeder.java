@@ -38,13 +38,14 @@ public class DbSeeder implements CommandLineRunner {
 					
 			));
 	private static List<Users> users = new ArrayList<>(Arrays.asList(
-			new Users("1","giki","123",new ArrayList<String>(Arrays.asList("USER")),
+			//password : "123"
+			new Users("1","giki","$2a$04$JPQDDreU05bkZmZNGKUp8u5xYese3mQDf7po.6sLoV.QuMv4F2H8C",new ArrayList<String>(Arrays.asList("USER")),
 					"admin@giki.edu.pk","true","Ghulam Ishaq Khan Institute"),
-					
-			new Users("2","NUST","456",new ArrayList<String>(Arrays.asList("USER")),
+			//password : "456"
+			new Users("2","nust","$2a$04$49F/aKWaDUKOJsDX8OXGoewgEzut64WutNDbjleLp1sYkpuryHQHa",new ArrayList<String>(Arrays.asList("USER")),
 					"admin@nust.edu.pk","true","National University Of S&T"),
-					
-			new Users("3","admin","admin",new ArrayList<String>(Arrays.asList("USER","ADMIN")),
+			//password : "admin"					
+			new Users("3","admin","$2a$04$aOSd.znG7tUQSFTkHc07ZeN/mUI4GAXu6yxxeJ0qfxkmtQ0UbBvuy",new ArrayList<String>(Arrays.asList("USER","ADMIN")),
 					"admin@qualsure.com","true","QualSure Inc.")		
 			
 			));
