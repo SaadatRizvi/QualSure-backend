@@ -1,16 +1,18 @@
 package com.qualsure.dataapi.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import com.qualsure.dataapi.service.UniversityLoginDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.qualsure.dataapi.service.UsersService;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
@@ -18,15 +20,32 @@ import com.qualsure.dataapi.service.UniversityLoginDetailsService;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private UniversityLoginDetailsService userDetailsService;
+	private UsersService userDetailsService;
+	@Autowired
+    private JwtAuthenticationEntryPoint unauthorizedHandler;
+	
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+	
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService)
-		.passwordEncoder(getPasswordEncoder());
+		   auth.userDetailsService(userDetailsService)
+           .passwordEncoder(encoder());
 //		auth
 //        .inMemoryAuthentication()
 //            .withUser("user").password("user").roles("USER");
 	}
+	
+	@Bean
+    public JwtAuthenticationFilter authenticationTokenFilterBean() throws Exception {
+        return new JwtAuthenticationFilter();
+    }
+
 	
 	
 	@Override
@@ -35,30 +54,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 		http.authorizeRequests()
 			.antMatchers("/hello").permitAll()
+			.antMatchers("/token/*").permitAll()
 			.anyRequest().authenticated()
-			.and()
-			.formLogin().permitAll()
-			.and()
-			.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login");
-		
+            .and()
+            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http
+            .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+
 	}
 
 
-	private PasswordEncoder getPasswordEncoder() {
-		return new PasswordEncoder() {
+	 @Bean
+	    public BCryptPasswordEncoder encoder(){
+	        return new BCryptPasswordEncoder();
+	    }
 
-			@Override
-			public String encode(CharSequence charSequence) {
-				return charSequence.toString();
-			}
-
-			@Override
-			public boolean matches(CharSequence charSequence, String s) {
-				return true;
-			}
-			
-		};
-	}
 
 	
 	
