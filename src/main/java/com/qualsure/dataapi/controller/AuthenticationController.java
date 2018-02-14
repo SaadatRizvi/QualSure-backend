@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +21,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.qualsure.dataapi.config.JwtTokenUtil;
 import com.qualsure.dataapi.model.AuthToken;
-import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.LoginUser;
 import com.qualsure.dataapi.model.Users;
 import com.qualsure.dataapi.service.UsersService;
 
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
 @RequestMapping("")
 public class AuthenticationController {
