@@ -16,6 +16,7 @@ public class DegreeService {
 	
 	
 	public List<Degree> getAllDegrees(){
+		
 		return degreeDAO.findAll();
 	}
 	
