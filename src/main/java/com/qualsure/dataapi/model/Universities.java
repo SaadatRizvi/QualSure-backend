@@ -20,10 +20,10 @@ public class Universities {
 		this.id = id;
 		this.name = name;
 		this.formFields = new ArrayList<FormAttributes>(Arrays.asList(
-				 new FormAttributes("StudentName",  "[A-Za-z ]+", "Username is incorrect"), 
-				 new FormAttributes("GPA",  "[0-4].?[0-9][0-9]", "GPA is incorrect"),
-				 new FormAttributes("DegreeType",  "[A-Z.]+", "DegreeType is incorrect"),
-				 new FormAttributes("DegreeName",  "[A-Z]", "DegreeName is incorrect")));
+				 new FormAttributes("StudentName",  "[A-Za-z ]+", "Username is incorrect", "String"), 
+				 new FormAttributes("GPA",  "[0-4].?[0-9][0-9]", "GPA is incorrect", "Number"),
+				 new FormAttributes("DegreeType",  "[A-Z.]+", "DegreeType is incorrect", "String"),
+				 new FormAttributes("DegreeName",  "[A-Z]", "DegreeName is incorrect", "String")));
 		
 		for (int i=0; i<formFields.size(); i++) {
 			this.formFields.add(formFields.get(i));
