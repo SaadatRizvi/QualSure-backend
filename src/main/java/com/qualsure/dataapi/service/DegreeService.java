@@ -16,6 +16,7 @@ public class DegreeService {
 	
 	
 	public List<Degree> getAllDegrees(){
+	
 		
 		return degreeDAO.findAll();
 	}
@@ -27,8 +28,7 @@ public class DegreeService {
 
 	public Degree addDegree(Degree degree) {
 		degreeDAO.insert(degree);
-		Degree newDegree = degree;
-		return newDegree;
+		return degree;
 	}
 
 	public void updateDegree( Degree degree) {

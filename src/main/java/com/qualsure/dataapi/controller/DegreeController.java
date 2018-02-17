@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,12 +18,20 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.service.DegreeService;
 
+//@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+
 @RestController
 public class DegreeController {
 	
 	@Autowired
 	private DegreeService degreeService;
-
+	
+	@GetMapping("/hello")
+	public String hello() {
+		return "Hoila";
+	}
+	
+	//@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/degrees")
 	public List<Degree> getAllDegrees() {
 		return degreeService.getAllDegrees();
