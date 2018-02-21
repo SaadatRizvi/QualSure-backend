@@ -9,14 +9,23 @@ public class Universities {
 	private String id;
 	private String name;
 	private List<FormAttributes> formFields;
+	private String firstTime;
+
 	
-	
+	public String isFirstTime() {
+		return firstTime;
+	}
+
+	public void setFirstTime(String firstTime) {
+		this.firstTime = firstTime;
+	}
+
 	Universities() {
 		
 	}
 
-	public Universities(String id, String name, List<FormAttributes> formFields) {
-
+	public Universities(String id, String name, List<FormAttributes> formFields, String firstTime) {
+		this.firstTime = firstTime;
 		this.id = id;
 		this.name = name;
 		this.formFields = new ArrayList<FormAttributes>(Arrays.asList(

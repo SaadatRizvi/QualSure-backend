@@ -27,9 +27,9 @@ public class DbSeeder implements CommandLineRunner {
 
 	
 	private static List<Universities> universities = new ArrayList<>(Arrays.asList(
-			new Universities("10", "GIKI", Arrays.asList(new FormAttributes("Stme",  "[A-Zas-z ]+", "rect", "String"))),
-			new Universities("20", "LUMS", Arrays.asList()),
-			new Universities("30", "NUST", Arrays.asList())
+			new Universities("10", "GIKI", Arrays.asList(new FormAttributes("Stme",  "[A-Zas-z ]+", "rect", "String")), "True"),
+			new Universities("20", "LUMS", Arrays.asList(), "True"),
+			new Universities("30", "NUST", Arrays.asList(), "False")
 			));
 	
 	
