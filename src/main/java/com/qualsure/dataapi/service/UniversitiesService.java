@@ -1,5 +1,9 @@
 package com.qualsure.dataapi.service;
 
+
+
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,9 @@ public class UniversitiesService {
 		universitiesDAO.delete(universitiesId);
 	}
 
-	
+	public List<Universities> getAllUniversitiesNames() {
+
+		return universitiesDAO.findByNameRegex("*");
+	}
 
 }

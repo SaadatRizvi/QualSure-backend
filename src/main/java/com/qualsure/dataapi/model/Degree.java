@@ -11,7 +11,7 @@ public class Degree {
 	private String firstName;
 	private String lastName;
 	private String degreeType;
-//	private Universities universities;
+	private String universityId;
 
 	
 	public Degree() {
@@ -21,13 +21,13 @@ public class Degree {
 	
 	
 	
-public Degree(String id, String firstName, String lastName, String degreeType){ //, Universities universities) {
+public Degree(String id, String firstName, String lastName, String degreeType, String universityId) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.degreeType = degreeType;
-//		this.universities = universities;
+		this.universityId = universityId;
 	}
 
 	public String getId() {
@@ -38,14 +38,14 @@ public Degree(String id, String firstName, String lastName, String degreeType){ 
 		this.id = id;
 	}
 	
-/*	public Universities getUniversities() {
-		return universities;
+	public String getUniversityId() {
+		return universityId;
 	}
 
-	public void setUniversities(Universities universities) {
-		this.universities = universities;
+	public void setUniversityId(String universityId) {
+		this.universityId = universityId;
 	}
-*/
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -69,5 +69,6 @@ public Degree(String id, String firstName, String lastName, String degreeType){ 
 	public void setDegreeType(String degreeType) {
 		this.degreeType = degreeType;
 	}
+	
 	
 }

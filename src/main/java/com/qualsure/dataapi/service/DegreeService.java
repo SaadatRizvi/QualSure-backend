@@ -39,4 +39,13 @@ public class DegreeService {
 		//	degrees.removeIf(t-> t.getId() == degreeId);
 		degreeDAO.delete(degreeId);
 	}
+	
+	public List<Degree> findByUniId(String universityId) {
+		return degreeDAO.findByUniversityId(universityId);
+	}
+	
+	public Degree findOneByUniId(String universityId, String degreeId) {
+		return degreeDAO.findByUniversityIdAndId(universityId, degreeId);
+	}
+	
 }

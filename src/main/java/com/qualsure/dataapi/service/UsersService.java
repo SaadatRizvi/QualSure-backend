@@ -67,7 +67,7 @@ public class UsersService implements UserDetailsService {
 
 		usersDAO.insert(user);
 		Users muser = this.findOne(user.getUsername());
-		Universities university = new Universities(muser.getId(), muser.getName(), Arrays.asList(), "True");
+		Universities university = new Universities(muser.getId(), muser.getName(), "True", Arrays.asList());
 
 		universitiesDAO.insert(university);
 
