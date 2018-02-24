@@ -63,7 +63,7 @@ public class AuthenticationController {
         
         return  ResponseEntity.ok()
         .headers(headers)
-        .body(new AuthToken(token));
+        .body(new AuthToken(token, location.toString() ));
     }
     
     @RequestMapping(value="/signup", method = RequestMethod.POST)
