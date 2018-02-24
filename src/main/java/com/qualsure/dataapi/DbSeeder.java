@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.qualsure.dataapi.dao.DegreeDAO;
 import com.qualsure.dataapi.dao.UsersDAO;
+import com.qualsure.dataapi.dao.ValidatorDAO;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.Users;
+import com.qualsure.dataapi.model.Validator;
 import com.qualsure.dataapi.dao.UniversitiesDAO;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.FormAttributes;
@@ -24,7 +26,10 @@ public class DbSeeder implements CommandLineRunner {
 	private DegreeDAO degreeDAO;
 	@Autowired	
 	private UniversitiesDAO universitiesDAO;
-
+	@Autowired
+	private UsersDAO usersDAO;
+	@Autowired
+	private ValidatorDAO validatorDAO;
 	
 	private static List<Universities> universities = new ArrayList<>(Arrays.asList(
 			new Universities("10", "GIKI", "True", Arrays.asList(new FormAttributes("Stme",  "[A-Zas-z ]+", "rect", "String"))),
@@ -33,8 +38,7 @@ public class DbSeeder implements CommandLineRunner {
 			));
 	
 	
-	@Autowired
-	private UsersDAO usersDAO;
+	
 
 
 //	private String id;
@@ -76,6 +80,18 @@ public class DbSeeder implements CommandLineRunner {
 			
 			*/
 	
+	private static List<Validator> validators = new ArrayList<>(
+			Arrays.asList(
+			new Validator("1","alpha", "[a-zA-z]*","text"),
+			new Validator("2","alphaReq", "[a-zA-z]+","text"),
+			new Validator("3","alphaNum", "[a-zA-z0-9]*","text"),
+			new Validator("4","alphaNumReq", "[a-zA-z0-9]+","text"),
+			new Validator("5","num", "[0-9]*","number"),
+			new Validator("6","numReq", "[0-9]+","number"),
+			new Validator("7","float", "[0-9]*[.]?[0-9]*","number"),
+			new Validator("8","floatReq", "[0-9]*[.]?[0-9]+","number")
+			));
+	
 	@Override
 	public void run(String... arg0) throws Exception {
 	
@@ -83,12 +99,14 @@ public class DbSeeder implements CommandLineRunner {
 		this.degreeDAO.deleteAll();
 		this.usersDAO.deleteAll();
 		this.universitiesDAO.deleteAll();
+		this.validatorDAO.deleteAll();
 		
 		
 		// add degress to db
 		this.degreeDAO.save(degrees);
 		this.usersDAO.save(users);
 		this.universitiesDAO.save(universities);
+		this.validatorDAO.save(validators);
 	}
 
 }
