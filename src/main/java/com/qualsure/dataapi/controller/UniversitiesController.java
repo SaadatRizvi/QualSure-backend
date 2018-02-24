@@ -4,7 +4,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.Universities;
+import com.qualsure.dataapi.service.DegreeService;
 import com.qualsure.dataapi.service.UniversitiesService;
 
 import java.net.URI;
@@ -23,7 +25,26 @@ public class UniversitiesController {
 	
 	@Autowired
 	private UniversitiesService universitiesService;
+	
+	@Autowired
+	private DegreeService degreeService;
 
+	@GetMapping("/universities/{universityId}/degrees")
+	public List<Degree> getDegreesByUniId(@PathVariable String universityId) {
+			return degreeService.findByUniId(universityId);
+	}
+	
+	@GetMapping("/universities/{universityId}/degrees/{degreeId}")
+	public Degree getOneByUniIdAndDegreeId(@PathVariable("universityId") String universityId, @PathVariable("degreeId") String degreeId) {
+		return degreeService.findOneByUniId(universityId, degreeId);
+	}
+
+	@GetMapping("/universities/names")
+	public List<Universities> getAllUniversitiesNames() {
+		return universitiesService.getAllUniversitiesNames();
+	}
+	
+	
 	@GetMapping("/universities")
 	public List<Universities> getAllUniversities() {
 		return universitiesService.getAllUniversities();

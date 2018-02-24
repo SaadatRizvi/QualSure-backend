@@ -27,9 +27,9 @@ public class DbSeeder implements CommandLineRunner {
 
 	
 	private static List<Universities> universities = new ArrayList<>(Arrays.asList(
-			new Universities("10", "GIKI", Arrays.asList(new FormAttributes("Stme",  "[A-Zas-z ]+", "rect", "String"))),
-			new Universities("20", "LUMS", Arrays.asList()),
-			new Universities("30", "NUST", Arrays.asList())
+			new Universities("10", "GIKI", "True", Arrays.asList(new FormAttributes("Stme",  "[A-Zas-z ]+", "rect", "String"))),
+			new Universities("20", "LUMS", "True", Arrays.asList()),
+			new Universities("30", "NUST", "False", Arrays.asList())
 			));
 	
 	
@@ -46,9 +46,10 @@ public class DbSeeder implements CommandLineRunner {
 //	private String name;
 //	
 	private static List<Degree> degrees = new ArrayList<>(Arrays.asList(
-			new Degree("1","Saadat","Rizvi","BS"),
-			new Degree("2","Rahjabeen","Abbasi","MS"),
-			new Degree("3","Urwah","Khan","BS")	
+			new Degree("1","Saadat","Rizvi","BS", "654654"),
+			new Degree("2","Rahjabeen","UmerSheikh","MS", "10"),
+			new Degree("4","Musab","Hameed","MBBS", "10"),
+			new Degree("3","Urwah","QA-Engineer","BS", "654645")	
 					
 			));
 	private static List<Users> users = new ArrayList<>(Arrays.asList(

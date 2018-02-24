@@ -32,6 +32,8 @@ public final void doFilter(final ServletRequest req, final ServletResponse res, 
 
     // without this header jquery.ajax calls returns 401 even after successful login and SSESSIONID being succesfully stored.
     response.setHeader("Access-Control-Allow-Credentials", "true");
+    response.setHeader("Access-Control-Expose-Headers", "location");
+
 
     response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
     response.setHeader("Access-Control-Max-Age", "3600");
