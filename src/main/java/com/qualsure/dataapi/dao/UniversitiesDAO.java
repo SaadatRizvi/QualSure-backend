@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 //import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.qualsure.dataapi.model.Degree;
+import com.qualsure.dataapi.model.FormAttributes;
 import com.qualsure.dataapi.model.Universities;
 import com.qualsure.dataapi.model.Users;
 
@@ -16,5 +17,8 @@ public interface UniversitiesDAO extends MongoRepository<Universities, String>{
 	
 	@Query(value="{}", fields="{ 'name' : 1}")
 	List <Universities> findByNameRegex(String allUniRegex);
+	
+	@Query(value="{}", fields="{ 'formFields' : 1}")
+	Universities findById(String universityId);
 	
 }

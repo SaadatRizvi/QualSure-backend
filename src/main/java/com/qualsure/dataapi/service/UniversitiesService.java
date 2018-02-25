@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qualsure.dataapi.dao.UniversitiesDAO;
+import com.qualsure.dataapi.model.FormAttributes;
 import com.qualsure.dataapi.model.Universities;
 
 @Service
@@ -45,6 +46,10 @@ public class UniversitiesService {
 	public List<Universities> getAllUniversitiesNames() {
 
 		return universitiesDAO.findByNameRegex("*");
+	}
+	
+	public Universities findFormFieldsByUniId(String universityId) {
+		return universitiesDAO.findById(universityId);
 	}
 
 }
