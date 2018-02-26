@@ -2,6 +2,9 @@ package com.qualsure.dataapi.model;
 
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "FormFields")
 public class FormField {
 
 	private String name;		//name of form attributes. studentName, GPA 
