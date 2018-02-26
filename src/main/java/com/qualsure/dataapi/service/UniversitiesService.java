@@ -2,15 +2,12 @@ package com.qualsure.dataapi.service;
 
 
 
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qualsure.dataapi.dao.UniversitiesDAO;
-import com.qualsure.dataapi.model.FormAttributes;
 import com.qualsure.dataapi.model.Universities;
 
 @Service
