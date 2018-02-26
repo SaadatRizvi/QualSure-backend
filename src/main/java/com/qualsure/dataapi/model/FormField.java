@@ -1,8 +1,13 @@
 package com.qualsure.dataapi.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.qualsure.dataapi.DbSeeder;
 
 @Document(collection = "FormFields")
 public class FormField {
@@ -12,14 +17,21 @@ public class FormField {
 	private String customError;
 	private String attributeType;
 	
+	@SuppressWarnings("unused")
+	@Autowired
+	private static Logger logger = Logger.getLogger(DbSeeder.class);
+	
 	public FormField() {
 
 	}
 	
 	public FormField(String name, List<Validator> validators, String customError, String attributeType) {
 		this.name = name;
-		for (int i=0; i<validators.size(); i++) {
-			this.validators.add(validators.get(i));
+		this.validators=new ArrayList<Validator>();
+		if(!validators.isEmpty()) {
+			for (int i=0; i<validators.size(); i++) {
+				this.validators.add(validators.get(i));
+			}
 		}
 		this.customError = customError;
 		this.attributeType = attributeType;

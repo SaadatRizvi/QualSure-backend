@@ -20,12 +20,6 @@ public class University {
 		this.id = id;
 		this.name = name;
 		this.firstTime = firstTime;
-/*		this.formFields = new ArrayList<FormAttributes>(Arrays.asList(
-				 new FormAttributes("StudentName",  Arrays.asList(alphaReq), "Username is incorrect", "String"), 
-				 new FormAttributes("GPA",  Arrays.asList(floatingReq), "GPA is incorrect", "Number"),
-				 new FormAttributes("DegreeType",  Arrays.asList(alphaReq), "DegreeType is incorrect", "String"),
-				 new FormAttributes("DegreeName",  Arrays.asList(alpha), "DegreeName is incorrect", "String")));
-*/		
 		for (int i=0; i<formFields.size(); i++) {
 			this.formFields.add(formFields.get(i));
 		}

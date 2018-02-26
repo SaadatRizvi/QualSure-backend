@@ -1,6 +1,7 @@
 package com.qualsure.dataapi;
 
 import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,8 +20,15 @@ import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.model.FormField;
 import com.qualsure.dataapi.model.University;
 
+import org.apache.log4j.Logger;
+
 @Service
 public class DbSeeder implements CommandLineRunner {
+
+	@SuppressWarnings("unused")
+	@Autowired
+	private static Logger logger = Logger.getLogger(DbSeeder.class);
+
 
 	@Autowired	
 	private DegreeDAO degreeDAO;
@@ -59,6 +67,11 @@ public class DbSeeder implements CommandLineRunner {
 			 new FormField("DegreeType",  Arrays.asList(validators.get(1)), "DegreeType is incorrect", "String"),
 			 new FormField("DegreeName",  Arrays.asList(validators.get(0)), "DegreeName is incorrect", "String")));
 	
+//	private static List<FormField> formFields2 = new ArrayList<FormField>(Arrays.asList(
+//			 new FormField("StudentName",  Arrays.asList(), "Username is incorrect", "String"), 
+//			 new FormField("GPA",  Arrays.asList(), "GPA is incorrect", "Number"),
+//			 new FormField("DegreeType",  Arrays.asList(), "DegreeType is incorrect", "String"),
+//			 new FormField("DegreeName",  Arrays.asList(), "DegreeName is incorrect", "String")));
 
 
 //	private String id;
@@ -104,12 +117,14 @@ public class DbSeeder implements CommandLineRunner {
 	
 	@Override
 	public void run(String... arg0) throws Exception {
-	
+
 		//drop all
 		this.degreeDAO.deleteAll();
 		this.usersDAO.deleteAll();
 		this.universityDAO.deleteAll();
 		this.validatorDAO.deleteAll();
+		this.formAttributesDAO.deleteAll();
+
 		
 		
 		// add to db
