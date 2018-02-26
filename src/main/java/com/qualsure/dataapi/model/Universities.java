@@ -18,14 +18,28 @@ public class Universities {
 	}
 
 	public Universities(String id, String name, String firstTime, List<FormAttributes> formFields) {
+		
+		Validator alpha = new Validator("1","alpha", "[a-zA-z]*","text");
+		Validator alphaReq = new Validator("2","alphaReq", "[a-zA-z]+","text");
+
+		Validator alphaNum = new Validator("3","alphaNum", "[a-zA-z0-9]*","text");
+		Validator alphaNumReq = new Validator("4","alphaNumReq", "[a-zA-z0-9]+","text");
+
+		Validator num = new Validator("5","num", "[0-9]*","number");
+		Validator numReq = new Validator("6","numReq", "[0-9]+","number");
+		
+		Validator floating = new Validator("7","float", "[0-9]*[.]?[0-9]*","number");
+		Validator floatingReq = new Validator("8","floatReq", "[0-9]*[.]?[0-9]+","number");
+
+
 		this.id = id;
 		this.name = name;
 		this.firstTime = firstTime;
 		this.formFields = new ArrayList<FormAttributes>(Arrays.asList(
-				 new FormAttributes("StudentName",  "[A-Za-z ]+", "Username is incorrect", "String"), 
-				 new FormAttributes("GPA",  "[0-4].?[0-9][0-9]", "GPA is incorrect", "Number"),
-				 new FormAttributes("DegreeType",  "[A-Z.]+", "DegreeType is incorrect", "String"),
-				 new FormAttributes("DegreeName",  "[A-Z]", "DegreeName is incorrect", "String")));
+				 new FormAttributes("StudentName",  Arrays.asList(alphaReq), "Username is incorrect", "String"), 
+				 new FormAttributes("GPA",  Arrays.asList(floatingReq), "GPA is incorrect", "Number"),
+				 new FormAttributes("DegreeType",  Arrays.asList(alphaReq), "DegreeType is incorrect", "String"),
+				 new FormAttributes("DegreeName",  Arrays.asList(alpha), "DegreeName is incorrect", "String")));
 		
 		for (int i=0; i<formFields.size(); i++) {
 			this.formFields.add(formFields.get(i));

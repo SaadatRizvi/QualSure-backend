@@ -1,9 +1,11 @@
 package com.qualsure.dataapi.model;
 
+import java.util.List;
+
 public class FormAttributes {
 
 	private String name;		//name of form attributes. studentName, GPA 
-	private String validator;
+	private List<Validator> validators;
 	private String customError;
 	private String attributeType;
 	
@@ -11,9 +13,11 @@ public class FormAttributes {
 
 	}
 	
-	public FormAttributes(String name, String validator, String customError, String attributeType) {
+	public FormAttributes(String name, List<Validator> validators, String customError, String attributeType) {
 		this.name = name;
-		this.validator = validator;
+		for (int i=0; i<validators.size(); i++) {
+			this.validators.add(validators.get(i));
+		}
 		this.customError = customError;
 		this.attributeType = attributeType;
 	}
@@ -34,14 +38,16 @@ public class FormAttributes {
 		this.attributeType = attributeType;
 	}
 	
-	public String getValidator() {
-		return validator;
-	}
+
 	
-	public void setValidator(String validator) {
-		this.validator = validator;
+	public List<Validator> getValidators() {
+		return validators;
 	}
-	
+
+	public void setValidators(List<Validator> validators) {
+		this.validators = validators;
+	}
+
 	public String getCustomError() {
 		return customError;
 	}
