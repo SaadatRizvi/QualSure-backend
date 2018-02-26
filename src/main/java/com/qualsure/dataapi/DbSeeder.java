@@ -9,13 +9,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import com.qualsure.dataapi.dao.DegreeDAO;
+import com.qualsure.dataapi.dao.FormAttributesDAO;
 import com.qualsure.dataapi.dao.UsersDAO;
 import com.qualsure.dataapi.dao.ValidatorDAO;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.Users;
 import com.qualsure.dataapi.model.Validator;
 import com.qualsure.dataapi.dao.UniversityDAO;
-import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.FormField;
 import com.qualsure.dataapi.model.University;
 
@@ -30,14 +30,34 @@ public class DbSeeder implements CommandLineRunner {
 	private UsersDAO usersDAO;
 	@Autowired
 	private ValidatorDAO validatorDAO;
+	@Autowired
+	private FormAttributesDAO formAttributesDAO;
 	
-	private static List<University> university = new ArrayList<>(Arrays.asList(
-			new University("10", "GIKI", "True", Arrays.asList(new FormField("Stme",  "[A-Zas-z ]+", "rect", "String"))),
+	private static List<University> universities = new ArrayList<>(Arrays.asList(
+			new University("10", "GIKI", "True", Arrays.asList()),
 			new University("20", "LUMS", "True", Arrays.asList()),
 			new University("30", "NUST", "False", Arrays.asList())
 			));
+
+	
+	private static List<Validator> validators = new ArrayList<>(
+			Arrays.asList(
+			new Validator("1","alpha", "[a-zA-z]*","text"),
+			new Validator("2","alphaReq", "[a-zA-z]+","text"),
+			new Validator("3","alphaNum", "[a-zA-z0-9]*","text"),
+			new Validator("4","alphaNumReq", "[a-zA-z0-9]+","text"),
+			new Validator("5","num", "[0-9]*","number"),
+			new Validator("6","numReq", "[0-9]+","number"),
+			new Validator("7","float", "[0-9]*[.]?[0-9]*","number"),
+			new Validator("8","floatReq", "[0-9]*[.]?[0-9]+","number")
+			));
 	
 	
+	private static List<FormField> formFields = new ArrayList<FormField>(Arrays.asList(
+			 new FormField("StudentName",  Arrays.asList(validators.get(1)), "Username is incorrect", "String"), 
+			 new FormField("GPA",  Arrays.asList(validators.get(7)), "GPA is incorrect", "Number"),
+			 new FormField("DegreeType",  Arrays.asList(validators.get(1)), "DegreeType is incorrect", "String"),
+			 new FormField("DegreeName",  Arrays.asList(validators.get(0)), "DegreeName is incorrect", "String")));
 	
 
 
@@ -80,33 +100,24 @@ public class DbSeeder implements CommandLineRunner {
 			
 			*/
 	
-	private static List<Validator> validators = new ArrayList<>(
-			Arrays.asList(
-			new Validator("1","alpha", "[a-zA-z]*","text"),
-			new Validator("2","alphaReq", "[a-zA-z]+","text"),
-			new Validator("3","alphaNum", "[a-zA-z0-9]*","text"),
-			new Validator("4","alphaNumReq", "[a-zA-z0-9]+","text"),
-			new Validator("5","num", "[0-9]*","number"),
-			new Validator("6","numReq", "[0-9]+","number"),
-			new Validator("7","float", "[0-9]*[.]?[0-9]*","number"),
-			new Validator("8","floatReq", "[0-9]*[.]?[0-9]+","number")
-			));
+
 	
 	@Override
 	public void run(String... arg0) throws Exception {
 	
-		//drop all degrees
+		//drop all
 		this.degreeDAO.deleteAll();
 		this.usersDAO.deleteAll();
 		this.universityDAO.deleteAll();
 		this.validatorDAO.deleteAll();
 		
 		
-		// add degress to db
+		// add to db
 		this.degreeDAO.save(degrees);
 		this.usersDAO.save(users);
-		this.universityDAO.save(university);
+		this.universityDAO.save(universities);
 		this.validatorDAO.save(validators);
+		this.formAttributesDAO.save(formFields);
 	}
 
 }
