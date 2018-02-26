@@ -28,8 +28,7 @@ public class FormAttributesController {
 	}
 	@GetMapping("/fixedFormAttributes/{attributeName}")
 	public FormAttributes getFixedFormAttribute(@PathVariable String attributeName) {
-//		logger.info("attributeName: "+attributeName+" val: "+
-//				FixedFormAttributes.getFormFieldByName(attributeName));
+//		logger.info("attributeName: "+attributeName+" val: "+FormAttributes.getFormAttributesByName(attributeName));
 		
 		return formAttributesService.getFormAttributesByName(attributeName);
 	}

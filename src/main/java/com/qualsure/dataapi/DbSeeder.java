@@ -18,9 +18,12 @@ import com.qualsure.dataapi.model.Validator;
 import com.qualsure.dataapi.dao.UniversitiesDAO;
 import com.qualsure.dataapi.model.FormAttributes;
 import com.qualsure.dataapi.model.Universities;
+import org.apache.log4j.Logger;
 
 @Service
 public class DbSeeder implements CommandLineRunner {
+	
+	private static Logger logger = Logger.getLogger(DbSeeder.class);
 
 	@Autowired	
 	private DegreeDAO degreeDAO;
@@ -51,13 +54,13 @@ public class DbSeeder implements CommandLineRunner {
 			new Validator("7","float", "[0-9]*[.]?[0-9]*","number"),
 			new Validator("8","floatReq", "[0-9]*[.]?[0-9]+","number")
 			));
-	
-	
-	private static List<FormAttributes> formFields = new ArrayList<FormAttributes>(Arrays.asList(
-			 new FormAttributes("StudentName",  Arrays.asList(validators.get(1)), "Username is incorrect", "String"), 
-			 new FormAttributes("GPA",  Arrays.asList(validators.get(7)), "GPA is incorrect", "Number"),
-			 new FormAttributes("DegreeType",  Arrays.asList(validators.get(1)), "DegreeType is incorrect", "String"),
-			 new FormAttributes("DegreeName",  Arrays.asList(validators.get(0)), "DegreeName is incorrect", "String")));
+		
+	private static List<FormAttributes> formFields = new ArrayList<>(Arrays.asList(
+			 new FormAttributes("StudentName",  Arrays.asList(), "Username is incorrect", "String"), 
+			 new FormAttributes("GPA",  Arrays.asList(), "GPA is incorrect", "Number"),
+			 new FormAttributes("DegreeType",  Arrays.asList(), "DegreeType is incorrect", "String"),
+			 new FormAttributes("DegreeName",  Arrays.asList(), "DegreeName is incorrect", "String")
+			 ));
 	
 
 
@@ -110,7 +113,7 @@ public class DbSeeder implements CommandLineRunner {
 		this.usersDAO.deleteAll();
 		this.universitiesDAO.deleteAll();
 		this.validatorDAO.deleteAll();
-		
+		this.formAttributesDAO.deleteAll();
 		
 		// add to db
 		this.degreeDAO.save(degrees);
