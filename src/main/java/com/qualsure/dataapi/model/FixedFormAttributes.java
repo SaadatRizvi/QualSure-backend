@@ -13,19 +13,19 @@ public class FixedFormAttributes {
 	private static Logger logger = Logger.getLogger(FixedFormAttributesController.class);
 
 	
-	private static List<FormAttributes> formFields = new ArrayList<FormAttributes>(Arrays.asList(
-			 new FormAttributes("StudentName",  "[A-Za-z ]+", "Username is incorrect", "String"), 
-			 new FormAttributes("GPA",  "[0-4].?[0-9][0-9]", "GPA is incorrect", "Number"),
-			 new FormAttributes("DegreeType",  "[A-Z.]+", "DegreeType is incorrect", "String"),
-			 new FormAttributes("DegreeName",  "[A-Z]", "DegreeName is incorrect", "String")));
+	private static List<FormField> formFields = new ArrayList<FormField>(Arrays.asList(
+			 new FormField("StudentName",  "[A-Za-z ]+", "Username is incorrect", "String"), 
+			 new FormField("GPA",  "[0-4].?[0-9][0-9]", "GPA is incorrect", "Number"),
+			 new FormField("DegreeType",  "[A-Z.]+", "DegreeType is incorrect", "String"),
+			 new FormField("DegreeName",  "[A-Z]", "DegreeName is incorrect", "String")));
 
-	public static List<FormAttributes> getFormFields() {
+	public static List<FormField> getFormFields() {
 		return formFields;
 	}
 
-	public static FormAttributes getFormFieldByName(String fieldName) {
+	public static FormField getFormFieldByName(String fieldName) {
 //		logger.info("getFormFieldByName: "+fieldName);
-		for(FormAttributes attr: FixedFormAttributes.formFields){
+		for(FormField attr: FixedFormAttributes.formFields){
 //			logger.info(attr.getName());
 
 			if(attr.getName().equals(fieldName)){

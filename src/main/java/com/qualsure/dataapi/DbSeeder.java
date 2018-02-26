@@ -14,10 +14,10 @@ import com.qualsure.dataapi.dao.ValidatorDAO;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.Users;
 import com.qualsure.dataapi.model.Validator;
-import com.qualsure.dataapi.dao.UniversitiesDAO;
+import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.model.Degree;
-import com.qualsure.dataapi.model.FormAttributes;
-import com.qualsure.dataapi.model.Universities;
+import com.qualsure.dataapi.model.FormField;
+import com.qualsure.dataapi.model.University;
 
 @Service
 public class DbSeeder implements CommandLineRunner {
@@ -25,16 +25,16 @@ public class DbSeeder implements CommandLineRunner {
 	@Autowired	
 	private DegreeDAO degreeDAO;
 	@Autowired	
-	private UniversitiesDAO universitiesDAO;
+	private UniversityDAO universityDAO;
 	@Autowired
 	private UsersDAO usersDAO;
 	@Autowired
 	private ValidatorDAO validatorDAO;
 	
-	private static List<Universities> universities = new ArrayList<>(Arrays.asList(
-			new Universities("10", "GIKI", "True", Arrays.asList(new FormAttributes("Stme",  "[A-Zas-z ]+", "rect", "String"))),
-			new Universities("20", "LUMS", "True", Arrays.asList()),
-			new Universities("30", "NUST", "False", Arrays.asList())
+	private static List<University> university = new ArrayList<>(Arrays.asList(
+			new University("10", "GIKI", "True", Arrays.asList(new FormField("Stme",  "[A-Zas-z ]+", "rect", "String"))),
+			new University("20", "LUMS", "True", Arrays.asList()),
+			new University("30", "NUST", "False", Arrays.asList())
 			));
 	
 	
@@ -98,14 +98,14 @@ public class DbSeeder implements CommandLineRunner {
 		//drop all degrees
 		this.degreeDAO.deleteAll();
 		this.usersDAO.deleteAll();
-		this.universitiesDAO.deleteAll();
+		this.universityDAO.deleteAll();
 		this.validatorDAO.deleteAll();
 		
 		
 		// add degress to db
 		this.degreeDAO.save(degrees);
 		this.usersDAO.save(users);
-		this.universitiesDAO.save(universities);
+		this.universityDAO.save(university);
 		this.validatorDAO.save(validators);
 	}
 

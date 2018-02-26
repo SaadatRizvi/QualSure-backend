@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.qualsure.dataapi.config.JwtTokenUtil;
 import com.qualsure.dataapi.model.AuthToken;
-import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.LoginUser;
 import com.qualsure.dataapi.model.Users;
 import com.qualsure.dataapi.service.UsersService;

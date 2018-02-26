@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Universities {
+public class University {
 
 	private String id;
 	private String name;
-	private List<FormAttributes> formFields;
+	private List<FormField> formFields;
 	private String firstTime;
 
 
 
-	Universities() {
+	University() {
 		
 	}
 
-	public Universities(String id, String name, String firstTime, List<FormAttributes> formFields) {
+	public University(String id, String name, String firstTime, List<FormField> formFields) {
 		
 		Validator alpha = new Validator("1","alpha", "[a-zA-z]*","text");
 		Validator alphaReq = new Validator("2","alphaReq", "[a-zA-z]+","text");
@@ -35,11 +35,11 @@ public class Universities {
 		this.id = id;
 		this.name = name;
 		this.firstTime = firstTime;
-		this.formFields = new ArrayList<FormAttributes>(Arrays.asList(
-				 new FormAttributes("StudentName",  Arrays.asList(alphaReq), "Username is incorrect", "String"), 
-				 new FormAttributes("GPA",  Arrays.asList(floatingReq), "GPA is incorrect", "Number"),
-				 new FormAttributes("DegreeType",  Arrays.asList(alphaReq), "DegreeType is incorrect", "String"),
-				 new FormAttributes("DegreeName",  Arrays.asList(alpha), "DegreeName is incorrect", "String")));
+		this.formFields = new ArrayList<FormField>(Arrays.asList(
+				 new FormField("StudentName",  Arrays.asList(alphaReq), "Username is incorrect", "String"), 
+				 new FormField("GPA",  Arrays.asList(floatingReq), "GPA is incorrect", "Number"),
+				 new FormField("DegreeType",  Arrays.asList(alphaReq), "DegreeType is incorrect", "String"),
+				 new FormField("DegreeName",  Arrays.asList(alpha), "DegreeName is incorrect", "String")));
 		
 		for (int i=0; i<formFields.size(); i++) {
 			this.formFields.add(formFields.get(i));
@@ -71,11 +71,11 @@ public class Universities {
 		this.name = name;
 	}
 
-	public List<FormAttributes> getFormFields() {
+	public List<FormField> getFormFields() {
 		return formFields;
 	}
 
-	public void setFormFields(List<FormAttributes> formFields) {
+	public void setFormFields(List<FormField> formFields) {
 		this.formFields = formFields;
 	}
 

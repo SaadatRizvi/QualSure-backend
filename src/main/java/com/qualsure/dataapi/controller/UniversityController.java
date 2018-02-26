@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.qualsure.dataapi.model.Degree;
-import com.qualsure.dataapi.model.FormAttributes;
-import com.qualsure.dataapi.model.Universities;
+import com.qualsure.dataapi.model.University;
 import com.qualsure.dataapi.service.DegreeService;
 import com.qualsure.dataapi.service.UniversitiesService;
 
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-public class UniversitiesController {
+public class UniversityController {
 	
 	@Autowired
 	private UniversitiesService universitiesService;
@@ -32,7 +31,7 @@ public class UniversitiesController {
 
 	
 	@GetMapping("/universities/{universityId}/formFields")
-	public Universities getFormFieldsByUniId(@PathVariable String universityId) {
+	public University getFormFieldsByUniId(@PathVariable String universityId) {
 			return universitiesService.findFormFieldsByUniId(universityId);
 	}
 	
@@ -48,25 +47,25 @@ public class UniversitiesController {
 	}
 
 	@GetMapping("/universities/names")
-	public List<Universities> getAllUniversitiesNames() {
+	public List<University> getAllUniversitiesNames() {
 		return universitiesService.getAllUniversitiesNames();
 	}
 	
 	
 	@GetMapping("/universities")
-	public List<Universities> getAllUniversities() {
+	public List<University> getAllUniversities() {
 		return universitiesService.getAllUniversities();
 	}
 	@GetMapping("/universities/{universitiesId}")
-	public Universities getUniversities(@PathVariable String universitiesId) {
+	public University getUniversities(@PathVariable String universitiesId) {
 		return universitiesService.getUniversities(universitiesId);
 	}
 	//A POST Service should return a status of created (201)
 	//when the resource creation is successful.
 	@PostMapping("/universities")
-	public ResponseEntity<?> addUniversities(@RequestBody Universities universities) {
-		 Universities newUniversities= universitiesService.addUniversities(universities);
-		 if (universities == null)
+	public ResponseEntity<?> addUniversities(@RequestBody University university) {
+		 University newUniversities= universitiesService.addUniversities(university);
+		 if (university == null)
 				return ResponseEntity.noContent().build();
 		 
 		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
@@ -77,9 +76,9 @@ public class UniversitiesController {
 	}
 	
 	@PutMapping("/universities")
-	public void updateUniversities(@RequestBody Universities universities) {
+	public void updateUniversities(@RequestBody University university) {
 		
-		 universitiesService.updateUniversities(universities);
+		 universitiesService.updateUniversities(university);
 	}
 	
 	@DeleteMapping("/universities/{universitiesId}")

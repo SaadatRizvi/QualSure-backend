@@ -2,18 +2,18 @@ package com.qualsure.dataapi.model;
 
 import java.util.List;
 
-public class FormAttributes {
+public class FormField {
 
 	private String name;		//name of form attributes. studentName, GPA 
 	private List<Validator> validators;
 	private String customError;
 	private String attributeType;
 	
-	public FormAttributes() {
+	public FormField() {
 
 	}
 	
-	public FormAttributes(String name, List<Validator> validators, String customError, String attributeType) {
+	public FormField(String name, List<Validator> validators, String customError, String attributeType) {
 		this.name = name;
 		for (int i=0; i<validators.size(); i++) {
 			this.validators.add(validators.get(i));

@@ -9,9 +9,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.qualsure.dataapi.dao.UniversitiesDAO;
+import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.dao.UsersDAO;
-import com.qualsure.dataapi.model.Universities;
+import com.qualsure.dataapi.model.University;
 import com.qualsure.dataapi.model.Users;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class UsersService implements UserDetailsService {
 	@Autowired
 	private UsersDAO usersDAO;
 	@Autowired
-	private UniversitiesDAO universitiesDAO;
+	private UniversityDAO universityDAO;
 
 	@Autowired
 	private BCryptPasswordEncoder bcryptEncoder;
@@ -67,9 +67,9 @@ public class UsersService implements UserDetailsService {
 
 		usersDAO.insert(user);
 		Users muser = this.findOne(user.getUsername());
-		Universities university = new Universities(muser.getId(), muser.getName(), "True", Arrays.asList());
+		University university = new University(muser.getId(), muser.getName(), "True", Arrays.asList());
 
-		universitiesDAO.insert(university);
+		universityDAO.insert(university);
 
 		return user;
 	}

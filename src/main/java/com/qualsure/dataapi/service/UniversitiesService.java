@@ -2,54 +2,51 @@ package com.qualsure.dataapi.service;
 
 
 
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.qualsure.dataapi.dao.UniversitiesDAO;
-import com.qualsure.dataapi.model.FormAttributes;
-import com.qualsure.dataapi.model.Universities;
+import com.qualsure.dataapi.dao.UniversityDAO;
+import com.qualsure.dataapi.model.University;
 
 @Service
 public class UniversitiesService {
 
 	@Autowired	
-	private UniversitiesDAO universitiesDAO;
+	private UniversityDAO universityDAO;
 	
 	
-	public List<Universities> getAllUniversities() {
-		return universitiesDAO.findAll();
+	public List<University> getAllUniversities() {
+		return universityDAO.findAll();
 	}
 
-	public Universities getUniversities(String universitiesId) {
-		return universitiesDAO.findOne(universitiesId);
+	public University getUniversities(String universitiesId) {
+		return universityDAO.findOne(universitiesId);
 	}
 
-	public Universities addUniversities(Universities universities) {
-		universitiesDAO.insert(universities);
-		Universities newUniversities = universities;
+	public University addUniversities(University university) {
+		universityDAO.insert(university);
+		University newUniversities = university;
 		return newUniversities;
 	}
 
-	public void updateUniversities(Universities universities) {
-		universitiesDAO.save(universities);
+	public void updateUniversities(University university) {
+		universityDAO.save(university);
 		
 	}
 
 	public void deleteUniversities(String universitiesId) {
-		universitiesDAO.delete(universitiesId);
+		universityDAO.delete(universitiesId);
 	}
 
-	public List<Universities> getAllUniversitiesNames() {
+	public List<University> getAllUniversitiesNames() {
 
-		return universitiesDAO.findByNameRegex("*");
+		return universityDAO.findByNameRegex("*");
 	}
 	
-	public Universities findFormFieldsByUniId(String universityId) {
-		return universitiesDAO.findById(universityId);
+	public University findFormFieldsByUniId(String universityId) {
+		return universityDAO.findById(universityId);
 	}
 
 }
