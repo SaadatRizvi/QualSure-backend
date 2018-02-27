@@ -10,7 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import com.qualsure.dataapi.dao.DegreeDAO;
-import com.qualsure.dataapi.dao.FormAttributesDAO;
+import com.qualsure.dataapi.dao.FormFieldDAO;
 import com.qualsure.dataapi.dao.UsersDAO;
 import com.qualsure.dataapi.dao.ValidatorDAO;
 import com.qualsure.dataapi.model.Degree;
@@ -39,7 +39,7 @@ public class DbSeeder implements CommandLineRunner {
 	@Autowired
 	private ValidatorDAO validatorDAO;
 	@Autowired
-	private FormAttributesDAO formAttributesDAO;
+	private FormFieldDAO formAttributesDAO;
 	
 	private static List<University> universities = new ArrayList<>(Arrays.asList(
 			new University("10", "GIKI", "True", Arrays.asList()),

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.qualsure.dataapi.model.FormField;
 
 @Repository
-public interface FormAttributesDAO extends MongoRepository<FormField, String>{
+public interface FormFieldDAO extends MongoRepository<FormField, String>{
 
 	FormField findByName(String attributeName);
 
