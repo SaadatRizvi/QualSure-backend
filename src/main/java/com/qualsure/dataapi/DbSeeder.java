@@ -62,10 +62,10 @@ public class DbSeeder implements CommandLineRunner {
 	
 	
 	private static List<FormField> formFields = new ArrayList<FormField>(Arrays.asList(
-			 new FormField("StudentName",  Arrays.asList(validators.get(1)), "Username is incorrect", "String"), 
-			 new FormField("GPA",  Arrays.asList(validators.get(7)), "GPA is incorrect", "Number"),
-			 new FormField("DegreeType",  Arrays.asList(validators.get(1)), "DegreeType is incorrect", "String"),
-			 new FormField("DegreeName",  Arrays.asList(validators.get(0)), "DegreeName is incorrect", "String")));
+			 new FormField("StudentName",  Arrays.asList(validators.get(1)), "Username is incorrect", "text"), 
+			 new FormField("GPA",  Arrays.asList(validators.get(7)), "GPA is incorrect", "number"),
+			 new FormField("DegreeType",  Arrays.asList(validators.get(1)), "DegreeType is incorrect", "text"),
+			 new FormField("DegreeName",  Arrays.asList(validators.get(0)), "DegreeName is incorrect", "text")));
 	
 //	private static List<FormField> formFields2 = new ArrayList<FormField>(Arrays.asList(
 //			 new FormField("StudentName",  Arrays.asList(), "Username is incorrect", "String"), 

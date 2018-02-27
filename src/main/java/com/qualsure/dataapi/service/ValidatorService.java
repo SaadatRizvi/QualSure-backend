@@ -3,10 +3,12 @@ package com.qualsure.dataapi.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.qualsure.dataapi.dao.ValidatorDAO;
 import com.qualsure.dataapi.model.Validator;
 
+@Service
 public class ValidatorService {
 
 	@Autowired	
@@ -17,22 +19,22 @@ public class ValidatorService {
 		return validatorDAO.findAll();
 	}
 
-	public Validator getValidators(String validatorId) {
+	public Validator getValidator(String validatorId) {
 		return validatorDAO.findOne(validatorId);
 	}
 
-	public Validator addValidators(Validator validator) {
+	public Validator addValidator(Validator validator) {
 		validatorDAO.insert(validator);
 		Validator newValidators = validator;
 		return newValidators;
 	}
 
-	public void updateValidators(Validator validator) {
+	public void updateValidator(Validator validator) {
 		validatorDAO.save(validator);
 		
 	}
 
-	public void deleteValidators(String validatorId) {
+	public void deleteValidator(String validatorId) {
 		validatorDAO.delete(validatorId);
 	}
 

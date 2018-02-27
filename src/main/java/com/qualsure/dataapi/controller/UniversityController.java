@@ -29,11 +29,13 @@ public class UniversityController {
 	@Autowired
 	private DegreeService degreeService;
 
-	
 	@GetMapping("/universities/{universityId}/formFields")
 	public University getFormFieldsByUniId(@PathVariable String universityId) {
 			return universitiesService.findFormFieldsByUniId(universityId);
-	}
+	}	
+
+	
+
 	
 	
 	@GetMapping("/universities/{universityId}/degrees")
