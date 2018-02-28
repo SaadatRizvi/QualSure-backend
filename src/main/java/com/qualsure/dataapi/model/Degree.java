@@ -12,7 +12,7 @@ public class Degree {
 	private String lastName;
 	private String degreeType;
 	private String universityId;
-
+	
 	
 	public Degree() {
 		

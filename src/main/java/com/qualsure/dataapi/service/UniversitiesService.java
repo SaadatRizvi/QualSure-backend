@@ -22,7 +22,7 @@ public class UniversitiesService {
 	}
 
 	public University getUniversities(String universitiesId) {
-		return universityDAO.findOne(universitiesId);
+		return universityDAO.findByAccountId(universitiesId);
 	}
 
 	public University addUniversities(University university) {
@@ -46,7 +46,8 @@ public class UniversitiesService {
 	}
 	
 	public University findFormFieldsByUniId(String universityId) {
-		return universityDAO.findById(universityId);
+		return universityDAO.findAllFormFields(universityId);
 	}
+
 
 }

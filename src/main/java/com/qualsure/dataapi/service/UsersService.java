@@ -73,5 +73,17 @@ public class UsersService implements UserDetailsService {
 
 		return user;
 	}
+	
+	public void addMultipleUsers(List<Users> users) {
+		
+		for(Users user: users) {
+			usersDAO.insert(user);
+			Users muser = this.findOne(user.getUsername());
+			University university = new University(muser.getId(), muser.getName(), "True", Arrays.asList());
+
+			universityDAO.insert(university);
+		}
+		
+	}
 
 }

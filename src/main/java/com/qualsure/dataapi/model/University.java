@@ -1,10 +1,17 @@
 package com.qualsure.dataapi.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "University")
 public class University {
 
+	@Id
 	private String id;
+	private String accountId;
 	private String name;
 	private List<FormField> formFields;
 	private String firstTime;
@@ -15,15 +22,25 @@ public class University {
 		
 	}
 
-	public University(String id, String name, String firstTime, List<FormField> formFields) {
+	public University(String accountId, String name, String firstTime, List<FormField> formFields) {
 		
-		this.id = id;
+		this.accountId=accountId;
 		this.name = name;
 		this.firstTime = firstTime;
+		this.formFields=new ArrayList<FormField>();
 		for (int i=0; i<formFields.size(); i++) {
 			this.formFields.add(formFields.get(i));
 		}
 	
+	}
+	
+
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
 	}
 
 	public String getFirstTime() {

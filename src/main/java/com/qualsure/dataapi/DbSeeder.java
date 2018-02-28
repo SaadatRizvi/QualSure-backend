@@ -16,6 +16,8 @@ import com.qualsure.dataapi.dao.ValidatorDAO;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.Users;
 import com.qualsure.dataapi.model.Validator;
+import com.qualsure.dataapi.service.UniversitiesService;
+import com.qualsure.dataapi.service.UsersService;
 import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.model.FormField;
 import com.qualsure.dataapi.model.University;
@@ -40,32 +42,35 @@ public class DbSeeder implements CommandLineRunner {
 	private ValidatorDAO validatorDAO;
 	@Autowired
 	private FormFieldDAO formAttributesDAO;
-	
-	private static List<University> universities = new ArrayList<>(Arrays.asList(
-			new University("10", "GIKI", "True", Arrays.asList()),
-			new University("20", "LUMS", "True", Arrays.asList()),
-			new University("30", "NUST", "False", Arrays.asList())
-			));
+	@Autowired
+	private UsersService usersService;
 
 	
 	private static List<Validator> validators = new ArrayList<>(
 			Arrays.asList(
-			new Validator("1","alpha", "[a-zA-z]*","text"),
-			new Validator("2","alphaReq", "[a-zA-z]+","text"),
-			new Validator("3","alphaNum", "[a-zA-z0-9]*","text"),
-			new Validator("4","alphaNumReq", "[a-zA-z0-9]+","text"),
-			new Validator("5","num", "[0-9]*","number"),
-			new Validator("6","numReq", "[0-9]+","number"),
-			new Validator("7","float", "[0-9]*[.]?[0-9]*","number"),
-			new Validator("8","floatReq", "[0-9]*[.]?[0-9]+","number")
+			new Validator("1","None", "","none"),
+			new Validator("2","Alpha", "[a-zA-z]*","text"),
+			new Validator("3","Alpha Required", "[a-zA-z]+","text"),
+			new Validator("4","Alphanumeric", "[a-zA-z0-9]*","text"),
+			new Validator("5","Alphanumeric Required", "[a-zA-z0-9]+","text"),
+			new Validator("6","Numeric", "[0-9]*","number"),
+			new Validator("7","Numeric Required", "[0-9]+","number"),
+			new Validator("8","Float", "[0-9]*[.]?[0-9]*","number"),
+			new Validator("9","Float Required", "[0-9]*[.]?[0-9]+","number")
 			));
 	
 	
 	private static List<FormField> formFields = new ArrayList<FormField>(Arrays.asList(
-			 new FormField("StudentName",  Arrays.asList(validators.get(1)), "Username is incorrect", "text"), 
-			 new FormField("GPA",  Arrays.asList(validators.get(7)), "GPA is incorrect", "number"),
-			 new FormField("DegreeType",  Arrays.asList(validators.get(1)), "DegreeType is incorrect", "text"),
-			 new FormField("DegreeName",  Arrays.asList(validators.get(0)), "DegreeName is incorrect", "text")));
+			 new FormField("Student Name",  Arrays.asList(validators.get(2)), "Student name is incorrect", "text"), 
+			 new FormField("GPA",  Arrays.asList(validators.get(8)), "GPA is incorrect", "number"),
+			 new FormField("Graduation Year",  Arrays.asList(validators.get(8)), "Graduation Year is incorrect", "text"),
+			 new FormField("Degree Type",  Arrays.asList(validators.get(2)), "Degree Type is incorrect", "text"),
+			 new FormField("Degree Name",  Arrays.asList(validators.get(1)), "Degree Name is incorrect", "text")));
+	
+	
+	
+	
+
 	
 //	private static List<FormField> formFields2 = new ArrayList<FormField>(Arrays.asList(
 //			 new FormField("StudentName",  Arrays.asList(), "Username is incorrect", "String"), 
@@ -82,13 +87,13 @@ public class DbSeeder implements CommandLineRunner {
 //	private String active;
 //	private String name;
 //	
-	private static List<Degree> degrees = new ArrayList<>(Arrays.asList(
-			new Degree("1","Saadat","Rizvi","BS", "654654"),
-			new Degree("2","Rahjabeen","UmerSheikh","MS", "10"),
-			new Degree("4","Musab","Hameed","MBBS", "10"),
-			new Degree("3","Urwah","QA-Engineer","BS", "654645")	
-					
-			));
+//	private static List<Degree> degrees = new ArrayList<>(Arrays.asList(
+//			new Degree("1","Saadat","Rizvi","BS", "654654"),
+//			new Degree("2","Rahjabeen","UmerSheikh","MS", "10"),
+//			new Degree("4","Musab","Hameed","MBBS", "10"),
+//			new Degree("3","Urwah","QA-Engineer","BS", "654645")	
+//					
+//			));
 	private static List<Users> users = new ArrayList<>(Arrays.asList(
 			//password : "123"
 			new Users("1","giki","$2a$04$JPQDDreU05bkZmZNGKUp8u5xYese3mQDf7po.6sLoV.QuMv4F2H8C",new ArrayList<String>(Arrays.asList("USER")),
@@ -118,6 +123,12 @@ public class DbSeeder implements CommandLineRunner {
 	@Override
 	public void run(String... arg0) throws Exception {
 
+		
+//		  List<University> universities = new ArrayList<>(Arrays.asList(
+//				new University("10", "GIKI", "True", formFields),
+//				new University("20", "LUMS", "True", Arrays.asList()),
+//				new University("30", "NUST", "False", Arrays.asList())
+//				));
 		//drop all
 		this.degreeDAO.deleteAll();
 		this.usersDAO.deleteAll();
@@ -128,9 +139,10 @@ public class DbSeeder implements CommandLineRunner {
 		
 		
 		// add to db
-		this.degreeDAO.save(degrees);
-		this.usersDAO.save(users);
-		this.universityDAO.save(universities);
+	//	this.degreeDAO.save(degrees);
+	//	this.usersDAO.save(users);
+	//	this.universityDAO.save(universities);
+		this.usersService.addMultipleUsers(users);
 		this.validatorDAO.save(validators);
 		this.formAttributesDAO.save(formFields);
 	}

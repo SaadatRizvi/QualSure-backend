@@ -14,7 +14,9 @@ public interface UniversityDAO extends MongoRepository<University, String>{
 	@Query(value="{}", fields="{ 'name' : 1}")
 	List <University> findByNameRegex(String allUniRegex);
 	
-	@Query(value="{}", fields="{ 'formFields' : 1}")
-	University findById(String universityId);
+	@Query(value="{ 'accountId' : ?0 }", fields="{ 'formFields' : 1, 'accountId': 1}")
+	University findAllFormFields(String accountId);
+	
+	University findByAccountId(String accountId);
 	
 }

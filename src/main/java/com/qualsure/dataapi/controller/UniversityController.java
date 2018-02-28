@@ -35,7 +35,10 @@ public class UniversityController {
 	}	
 
 	
-
+	@GetMapping("/universities/{universityId}/verifyDegree/")
+	public Degree verifyDegreeById(@PathVariable String universityId) {
+		return DegreeService.findDegreeInDb(universityId);
+	}
 	
 	
 	@GetMapping("/universities/{universityId}/degrees")

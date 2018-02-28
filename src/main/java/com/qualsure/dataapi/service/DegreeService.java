@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.qualsure.dataapi.dao.DegreeDAO;
 import com.qualsure.dataapi.model.Degree;
+import com.qualsure.dataapi.model.University;
 
 @Service
 public class DegreeService {
@@ -47,5 +48,6 @@ public class DegreeService {
 	public Degree findOneByUniId(String universityId, String degreeId) {
 		return degreeDAO.findByUniversityIdAndId(universityId, degreeId);
 	}
+
 	
 }
