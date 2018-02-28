@@ -35,10 +35,16 @@ public class UniversityController {
 	}	
 
 	
-	@GetMapping("/universities/{universityId}/verifyDegree/")
-	public Degree verifyDegreeById(@PathVariable String universityId) {
-		return DegreeService.findDegreeInDb(universityId);
+	@PostMapping("/universities/{universityId}/verifyDegree")
+	public String verifyDegreeById(@PathVariable String universityId, @RequestBody Degree degree) {
+		
+		if(degreeService.findDegreeInDb(universityId, degree) != null)
+			return "Found";
+		else
+			return "Not found";
+		
 	}
+	
 	
 	
 	@GetMapping("/universities/{universityId}/degrees")

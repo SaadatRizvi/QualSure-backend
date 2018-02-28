@@ -63,7 +63,7 @@ public class DbSeeder implements CommandLineRunner {
 	private static List<FormField> formFields = new ArrayList<FormField>(Arrays.asList(
 			 new FormField("Student Name",  Arrays.asList(validators.get(2)), "Student name is incorrect", "text"), 
 			 new FormField("GPA",  Arrays.asList(validators.get(8)), "GPA is incorrect", "number"),
-			 new FormField("Graduation Year",  Arrays.asList(validators.get(8)), "Graduation Year is incorrect", "text"),
+			 new FormField("Graduation Year",  Arrays.asList(validators.get(6)), "Graduation Year is incorrect", "number"),
 			 new FormField("Degree Type",  Arrays.asList(validators.get(2)), "Degree Type is incorrect", "text"),
 			 new FormField("Degree Name",  Arrays.asList(validators.get(1)), "Degree Name is incorrect", "text")));
 	
@@ -80,20 +80,20 @@ public class DbSeeder implements CommandLineRunner {
 
 
 //	private String id;
-//	private String username;
-//	private String password;
-//	private List<String> roles;
-//	private String email;
-//	private String active;
-//	private String name;
+//	private String universityId;
+//	private String studentName;
+//	private String gpa;
+//	private String graduationYear;
+//	private String degreeType;
+//	private String degreeName;
 //	
-//	private static List<Degree> degrees = new ArrayList<>(Arrays.asList(
-//			new Degree("1","Saadat","Rizvi","BS", "654654"),
-//			new Degree("2","Rahjabeen","UmerSheikh","MS", "10"),
-//			new Degree("4","Musab","Hameed","MBBS", "10"),
-//			new Degree("3","Urwah","QA-Engineer","BS", "654645")	
-//					
-//			));
+	private static List<Degree> degrees = new ArrayList<>(Arrays.asList(
+			new Degree("100","2","Rizvi","2.3", "2015", "BS", "CS"),
+			new Degree("200","2","UmerSheikh","3.3", "2010", "MS", "CSSS"),
+			new Degree("400","3","Hameed","1.1", "2011", "MS", "cSS"),
+			new Degree("300","1","QA-Engineer","2.6", "2016", "PHD", "CScscs")	
+					
+			));
 	private static List<Users> users = new ArrayList<>(Arrays.asList(
 			//password : "123"
 			new Users("1","giki","$2a$04$JPQDDreU05bkZmZNGKUp8u5xYese3mQDf7po.6sLoV.QuMv4F2H8C",new ArrayList<String>(Arrays.asList("USER")),
@@ -139,7 +139,7 @@ public class DbSeeder implements CommandLineRunner {
 		
 		
 		// add to db
-	//	this.degreeDAO.save(degrees);
+		this.degreeDAO.save(degrees);
 	//	this.usersDAO.save(users);
 	//	this.universityDAO.save(universities);
 		this.usersService.addMultipleUsers(users);

@@ -12,5 +12,8 @@ public interface DegreeDAO extends MongoRepository<Degree, String>{
 	
 	List<Degree> findByUniversityId(String universityId);
 	Degree findByUniversityIdAndId(String universityId, String degreeId);
+
+	
+	Degree findByUniversityIdAndStudentNameAndGpaAndGraduationYearAndDegreeTypeAndDegreeName(String universityId, String studentName, String gpa, String graduationYear, String degreeType, String degreeName);
 	
 }

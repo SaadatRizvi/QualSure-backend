@@ -8,36 +8,41 @@ public class Degree {
 
 	@Id 
 	private String id;
-	private String firstName;
-	private String lastName;
-	private String degreeType;
 	private String universityId;
-	
+	private String studentName;
+	private String gpa;
+	private String graduationYear;
+	private String degreeType;
+	private String degreeName;
+
+
 	
 	public Degree() {
 		
 	}
 	
-	
-	
-	
-public Degree(String id, String firstName, String lastName, String degreeType, String universityId) {
+	public Degree(String id, String universityId, String studentName, String gpa, String graduationYear, String degreeType, String degreeName) {
 		super();
 		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.degreeType = degreeType;
 		this.universityId = universityId;
+		this.studentName = studentName;
+		this.gpa = gpa;
+		this.graduationYear = graduationYear;
+		this.degreeType = degreeType;
+		this.degreeName = degreeName;
 	}
+
 
 	public String getId() {
 		return id;
 	}
 
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
+
 	public String getUniversityId() {
 		return universityId;
 	}
@@ -46,29 +51,56 @@ public Degree(String id, String firstName, String lastName, String degreeType, S
 		this.universityId = universityId;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getStudentName() {
+		return studentName;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
 	}
 
-	public String getLastName() {
-		return lastName;
+
+	public String getGpa() {
+		return gpa;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+
+	public void setGpa(String gpa) {
+		this.gpa = gpa;
 	}
+
+
+	public String getGraduationYear() {
+		return graduationYear;
+	}
+
+
+	public void setGraduationYear(String graduationYear) {
+		this.graduationYear = graduationYear;
+	}
+
+
+	public String getDegreeName() {
+		return degreeName;
+	}
+
+
+	public void setDegreeName(String degreeName) {
+		this.degreeName = degreeName;
+	}
+
 
 	public String getDegreeType() {
 		return degreeType;
 	}
 
+
 	public void setDegreeType(String degreeType) {
 		this.degreeType = degreeType;
 	}
-	
+
+
+
 	
 }
