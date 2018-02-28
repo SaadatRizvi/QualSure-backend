@@ -45,17 +45,45 @@ public class UniversityController {
 		
 	}
 	
+	@GetMapping("/hello")
+	public String hello() {
+		return "Hoila";
+	}
+	
+	//@PreAuthorize("hasAnyRole('ADMIN')")
+	
+	@GetMapping("universities/{universityId}/degrees/{degreeId}")
+	public Degree getDegree(@PathVariable String universityId, @PathVariable String degreeId) {
+		return degreeService.getDegree(universityId, degreeId);
+	}
+	
+/*	@GetMapping("/universities/{universityId}/degrees/{degreeId}")
+	public Degree getOneByUniIdAndDegreeId(@PathVariable("universityId") String universityId, @PathVariable("degreeId") String degreeId) {
+		return degreeService.getDegree(universityId, degreeId);
+	}
+	*/
+	
+	//A POST Service should return a status of created (201)
+	//when the resource creation is successful.
+	@PostMapping("universities/{universityId}/degrees")
+	public ResponseEntity<?> addDegree(@PathVariable String universityId, @RequestBody Degree degree) {
+		 Degree newDegree= degreeService.addDegree(universityId, degree);
+		 if (degree == null)
+				return ResponseEntity.noContent().build();
+		 
+		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
+					"/{id}").buildAndExpand(newDegree.getId()).toUri();
+
+			return ResponseEntity.created(location).build();
+		 
+	}
 	
 	
 	@GetMapping("/universities/{universityId}/degrees")
 	public List<Degree> getDegreesByUniId(@PathVariable String universityId) {
 			return degreeService.findByUniId(universityId);
 	}
-	
-	@GetMapping("/universities/{universityId}/degrees/{degreeId}")
-	public Degree getOneByUniIdAndDegreeId(@PathVariable("universityId") String universityId, @PathVariable("degreeId") String degreeId) {
-		return degreeService.findOneByUniId(universityId, degreeId);
-	}
+
 
 	@GetMapping("/universities/names")
 	public List<University> getAllUniversitiesNames() {

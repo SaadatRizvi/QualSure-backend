@@ -21,12 +21,13 @@ public class DegreeService {
 		return degreeDAO.findAll();
 	}
 	
-	public Degree getDegree(String degreeId) {
+	public Degree getDegree(String universityId, String degreeId) {
 	//	return degrees.stream().filter(t -> t.getId() == degreeId).findFirst().get();
-		return degreeDAO.findOne(degreeId);
+		return degreeDAO.findByUniversityIdAndId(universityId, degreeId);
 	}
 
-	public Degree addDegree(Degree degree) {
+	public Degree addDegree(String universityId, Degree degree) {
+		degree.setUniversityId(universityId);
 		degreeDAO.insert(degree);
 		return degree;
 	}
@@ -44,9 +45,6 @@ public class DegreeService {
 		return degreeDAO.findByUniversityId(universityId);
 	}
 	
-	public Degree findOneByUniId(String universityId, String degreeId) {
-		return degreeDAO.findByUniversityIdAndId(universityId, degreeId);
-	}
 
 	public Degree findDegreeInDb(String universityId, Degree degree) {
 		String studentName = degree.getStudentName();
