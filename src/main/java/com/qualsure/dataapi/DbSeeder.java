@@ -50,21 +50,21 @@ public class DbSeeder implements CommandLineRunner {
 			Arrays.asList(
 			new Validator("1","None", "","none"),
 			new Validator("2","Alpha", "[a-zA-z]*","text"),
-			new Validator("3","Alpha Required", "[a-zA-z]+","text"),
-			new Validator("4","Alphanumeric", "[a-zA-z0-9]*","text"),
-			new Validator("5","Alphanumeric Required", "[a-zA-z0-9]+","text"),
-			new Validator("6","Numeric", "[0-9]*","number"),
-			new Validator("7","Numeric Required", "[0-9]+","number"),
-			new Validator("8","Float", "[0-9]*[.]?[0-9]*","number"),
-			new Validator("9","Float Required", "[0-9]*[.]?[0-9]+","number")
+//			new Validator("3","Alpha Required", "[a-zA-z]+","text"),
+			new Validator("3","Alphanumeric", "[a-zA-z0-9]*","text"),
+//			new Validator("5","Alphanumeric Required", "[a-zA-z0-9]+","text"),
+			new Validator("4","Numeric", "[0-9]*","number"),
+//			new Validator("7","Numeric Required", "[0-9]+","number"),
+			new Validator("5","Float", "[0-9]*[.]?[0-9]*","number")
+//			new Validator("9","Float Required", "[0-9]*[.]?[0-9]+","number")
 			));
 	
 	
 	private static List<FormField> formFields = new ArrayList<FormField>(Arrays.asList(
-			 new FormField("Student Name",  Arrays.asList(validators.get(2)), "Student name is incorrect", "text"), 
-			 new FormField("GPA",  Arrays.asList(validators.get(8)), "GPA is incorrect", "number"),
-			 new FormField("Graduation Year",  Arrays.asList(validators.get(6)), "Graduation Year is incorrect", "number"),
-			 new FormField("Degree Type",  Arrays.asList(validators.get(2)), "Degree Type is incorrect", "text"),
+			 new FormField("Student Name",  Arrays.asList(validators.get(1)), "Student name is incorrect", "text"), 
+			 new FormField("GPA",  Arrays.asList(validators.get(4)), "GPA is incorrect", "number"),
+			 new FormField("Graduation Year",  Arrays.asList(validators.get(4)), "Graduation Year is incorrect", "number"),
+			 new FormField("Degree Type",  Arrays.asList(validators.get(1)), "Degree Type is incorrect", "text"),
 			 new FormField("Degree Name",  Arrays.asList(validators.get(1)), "Degree Name is incorrect", "text")));
 	
 	
@@ -87,24 +87,24 @@ public class DbSeeder implements CommandLineRunner {
 //	private String degreeType;
 //	private String degreeName;
 //	
-	private static List<Degree> degrees = new ArrayList<>(Arrays.asList(
-			new Degree("100","2","Rizvi","2.3", "2015", "BS", "CS"),
-			new Degree("200","2","UmerSheikh","3.3", "2010", "MS", "CSSS"),
-			new Degree("400","3","Hameed","1.1", "2011", "MS", "cSS"),
-			new Degree("300","1","QA-Engineer","2.6", "2016", "PHD", "CScscs")	
-					
-			));
-	private static List<Users> users = new ArrayList<>(Arrays.asList(
-			//password : "123"
-			new Users("1","giki","$2a$04$JPQDDreU05bkZmZNGKUp8u5xYese3mQDf7po.6sLoV.QuMv4F2H8C",new ArrayList<String>(Arrays.asList("USER")),
-					"admin@giki.edu.pk","true","Ghulam Ishaq Khan Institute"),
-			//password : "456"
-			new Users("2","nust","$2a$04$49F/aKWaDUKOJsDX8OXGoewgEzut64WutNDbjleLp1sYkpuryHQHa",new ArrayList<String>(Arrays.asList("USER")),
-					"admin@nust.edu.pk","true","National University Of S&T"),
-			//password : "admin"					
-			new Users("3","admin","$2a$04$aOSd.znG7tUQSFTkHc07ZeN/mUI4GAXu6yxxeJ0qfxkmtQ0UbBvuy",new ArrayList<String>(Arrays.asList("USER","ADMIN")),
-					"admin@qualsure.com","true","QualSure Inc.")
-			));
+//	private static List<Degree> degrees = new ArrayList<>(Arrays.asList(
+//			new Degree("100","2","Rizvi","2.3", "2015", "BS", "CS"),
+//			new Degree("200","2","UmerSheikh","3.3", "2010", "MS", "CSSS"),
+//			new Degree("400","3","Hameed","1.1", "2011", "MS", "cSS"),
+//			new Degree("300","1","QA-Engineer","2.6", "2016", "PHD", "CScscs")	
+//					
+//			));
+//	private static List<Users> users = new ArrayList<>(Arrays.asList(
+//			//password : "123"
+//			new Users("1","giki","$2a$04$JPQDDreU05bkZmZNGKUp8u5xYese3mQDf7po.6sLoV.QuMv4F2H8C",new ArrayList<String>(Arrays.asList("USER")),
+//					"admin@giki.edu.pk","true","Ghulam Ishaq Khan Institute"),
+//			//password : "456"
+//			new Users("2","nust","$2a$04$49F/aKWaDUKOJsDX8OXGoewgEzut64WutNDbjleLp1sYkpuryHQHa",new ArrayList<String>(Arrays.asList("USER")),
+//					"admin@nust.edu.pk","true","National University Of S&T"),
+//			//password : "admin"					
+//			new Users("3","admin","$2a$04$aOSd.znG7tUQSFTkHc07ZeN/mUI4GAXu6yxxeJ0qfxkmtQ0UbBvuy",new ArrayList<String>(Arrays.asList("USER","ADMIN")),
+//					"admin@qualsure.com","true","QualSure Inc.")
+//			));
 			/*
 			 "username":"lums",
 			 "password":"abc",
@@ -139,10 +139,10 @@ public class DbSeeder implements CommandLineRunner {
 		
 		
 		// add to db
-		this.degreeDAO.save(degrees);
+//		this.degreeDAO.save(degrees);
 	//	this.usersDAO.save(users);
 	//	this.universityDAO.save(universities);
-		this.usersService.addMultipleUsers(users);
+	//	this.usersService.addMultipleUsers(users);
 		this.validatorDAO.save(validators);
 		this.formAttributesDAO.save(formFields);
 	}

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.qualsure.dataapi.model.Degree;
+import com.qualsure.dataapi.model.DegreeStatus;
 import com.qualsure.dataapi.model.University;
 import com.qualsure.dataapi.service.DegreeService;
 import com.qualsure.dataapi.service.UniversitiesService;
@@ -36,12 +37,12 @@ public class UniversityController {
 
 	
 	@PostMapping("/universities/{universityId}/verifyDegree")
-	public String verifyDegreeById(@PathVariable String universityId, @RequestBody Degree degree) {
+	public DegreeStatus verifyDegreeById(@PathVariable String universityId, @RequestBody Degree degree) {
 		
 		if(degreeService.findDegreeInDb(universityId, degree) != null)
-			return "Found";
+			return new DegreeStatus("Success");
 		else
-			return "Not found";
+			return new DegreeStatus("Failed");
 		
 	}
 	
