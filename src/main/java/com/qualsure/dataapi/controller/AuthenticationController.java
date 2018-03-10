@@ -2,7 +2,9 @@ package com.qualsure.dataapi.controller;
 
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -77,6 +79,12 @@ public class AuthenticationController {
 			return ResponseEntity.created(location).build();
 		 
 	}
+    
+    @GetMapping("/checkUsername/{username}")
+	public Map<String, Boolean> getAllUsers(@PathVariable String username) {
+    	return Collections.singletonMap("success", userService.findIfAvailable(username));
+    }
+
     
     @GetMapping("/users")
 	public List<Users> getAllUsers() {

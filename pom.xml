@@ -5,7 +5,7 @@
 
 	<groupId>com.qualsure</groupId>
 	<artifactId>data-api</artifactId>
-	<version>5.0.1</version>
+	<version>6.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>data-api</name>

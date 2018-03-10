@@ -82,6 +82,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers("/hello").permitAll()
 			.antMatchers("/universities","/universities/**").permitAll()
 			.antMatchers("/validators","/validators/*").permitAll()
+			.antMatchers("/checkUsername","/checkUsername/*").permitAll()
+
 			.antMatchers("/fixedFormFields","/fixedFormFields/*").permitAll()
 			.antMatchers("/token/*", "/signup" ).permitAll()
 			.anyRequest().authenticated()

@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.qualsure.dataapi.dao.FormFieldDAO;
 import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.dao.UsersDAO;
 import com.qualsure.dataapi.model.University;
@@ -25,6 +26,9 @@ public class UsersService implements UserDetailsService {
 	private UsersDAO usersDAO;
 	@Autowired
 	private UniversityDAO universityDAO;
+	
+	@Autowired	
+	private FormFieldDAO formFieldDAO;
 
 	@Autowired
 	private BCryptPasswordEncoder bcryptEncoder;
@@ -67,7 +71,7 @@ public class UsersService implements UserDetailsService {
 
 		usersDAO.insert(user);
 		Users muser = this.findOne(user.getUsername());
-		University university = new University(muser.getId(), muser.getName(), "True", Arrays.asList());
+		University university = new University(muser.getId(), muser.getName(), "True", formFieldDAO.findAll());
 
 		universityDAO.insert(university);
 
@@ -79,10 +83,17 @@ public class UsersService implements UserDetailsService {
 		for(Users user: users) {
 			usersDAO.insert(user);
 			Users muser = this.findOne(user.getUsername());
-			University university = new University(muser.getId(), muser.getName(), "True", Arrays.asList());
+			University university = new University(muser.getId(), muser.getName(), "True", formFieldDAO.findAll());
 
 			universityDAO.insert(university);
 		}
+		
+	}
+
+	public boolean findIfAvailable(String username) {
+		Users temp = this.findOne(username);
+		if(temp != null) return false;
+		return true;
 		
 	}
 
