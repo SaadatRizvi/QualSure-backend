@@ -18,6 +18,9 @@ import com.qualsure.dataapi.model.Users;
 import com.qualsure.dataapi.model.Validator;
 import com.qualsure.dataapi.service.UniversitiesService;
 import com.qualsure.dataapi.service.UsersService;
+
+import net.sf.ehcache.CacheManager;
+
 import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.model.FormField;
 import com.qualsure.dataapi.model.University;
@@ -45,6 +48,7 @@ public class DbSeeder implements CommandLineRunner {
 	@Autowired
 	private UsersService usersService;
 
+	CacheManager cm = CacheManager.getInstance();
 	
 	private static List<Validator> validators = new ArrayList<>(
 			Arrays.asList(
@@ -160,6 +164,9 @@ public class DbSeeder implements CommandLineRunner {
 		this.validatorDAO.save(validators);
 		this.formAttributesDAO.save(formFields);
 		this.usersService.addMultipleUsers(users);
+		
+		//add a cache for the whole program
+//		cm.addCache("cache1");
 
 	}
 

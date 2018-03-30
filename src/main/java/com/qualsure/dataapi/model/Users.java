@@ -51,6 +51,23 @@ public class Users {
 		this.dataCryptPassword = dataCryptPassword;
 
 	}
+	public Users(String id, String username, String password, List<String> roles, String email, String active,
+			String name, String number, String address, String representativeName, String representativeNumber,
+			String representativeCNIC) {
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.roles = roles;
+		this.email = email;
+		this.active = active;
+		this.name = name;
+		this.number = number;
+		this.address = address;
+		this.representativeName = representativeName;
+		this.representativeNumber = representativeNumber;
+		this.representativeCNIC = representativeCNIC;
+
+	}
 
 
 	public String getNumber() {

@@ -7,8 +7,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.University;
+//import com.qualsure.dataapi.service.CacheService;
 import com.qualsure.dataapi.service.DegreeService;
 import com.qualsure.dataapi.service.UniversitiesService;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import java.net.URI;
 import java.util.List;
@@ -23,7 +28,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 public class UniversityController {
-	
+	static CacheManager cm = CacheManager.getInstance();
+
 	@Autowired
 	private UniversitiesService universitiesService;
 	

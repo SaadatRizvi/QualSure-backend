@@ -17,6 +17,10 @@ import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.University;
 import com.qualsure.dataapi.model.Users;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +60,9 @@ public class UsersService implements UserDetailsService {
 
 	@Autowired
 	private BCryptPasswordEncoder bcryptEncoder;
-
+	
+	CacheManager cm = CacheManager.getInstance();
+	
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 		Users user = usersDAO.findByUsername(userId);
 		if(user == null){
@@ -82,11 +88,13 @@ public class UsersService implements UserDetailsService {
 	public Users findOne(String username) {
 		return usersDAO.findByUsername(username);
 	}
-	public void signInDataCrypt(String username, String password, byte[] cipherText) throws Exception{
+	public boolean signInDataCrypt(String username, String password, byte[] cipherText) throws Exception{
 		EncryptionService advancedEncryptionStandard = new EncryptionService();
-		advancedEncryptionStandard.setKey(password.getBytes(StandardCharsets.UTF_8));
+		advancedEncryptionStandard.setKey(getRequiredLength(password).getBytes(StandardCharsets.UTF_8));
 		byte[] decryptedCipherText = advancedEncryptionStandard.decrypt(cipherText);
-		
+		Cache cache = cm.getCache("cache1");
+		System.out.println(new String(cipherText, StandardCharsets.UTF_8));
+		System.out.println(new String(decryptedCipherText, StandardCharsets.UTF_8));
 		try{
       	  RestTemplate restTemplate = new RestTemplate();
 		  HttpHeaders headers = new HttpHeaders();
@@ -94,26 +102,34 @@ public class UsersService implements UserDetailsService {
 			  
 		  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
 		  map.add("username", username);
-		  map.add("password", decryptedCipherText.toString());
+		  map.add("password", new String(decryptedCipherText, StandardCharsets.UTF_8));
 			  
-		  String url = "http://192.168.210.250:8090/authenticate";
-			  
+		  String url = "http://192.168.0.105:8090/authenticate";
+			   
 		  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 		  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
 			  
 		  System.out.println(response.toString());
-//	      if(response.getStatus().equals("true")){
-//	    	  System.out.println("Data Cypt user created");
-//	    	  return true;
-//	      }
-//	      else{
-//	    	  System.out.println("user not created");
-//	    	  return false;
-//	      }
+	      if(response.getStatus().equals("true")){
+	    	  System.out.println("Data Cypt user logged in ");
+	    	  cache.put(new Element("token",response.getToken()));
+	    	  Element ele = cache.get("token");
+	  		
+	  		  //6. Print out the element
+	  		  String output = (ele == null ? null : ele.getObjectValue().toString());
+	  		  System.out.println(output);
+//	    	  cach.setMyCache("token",response.getToken());
+//	    	  System.out.println(cach.getMyCache("token"));
+	    	  return true;
+	      }
+	      else{
+	    	  System.out.println("user not logged in");
+	    	  return false;
+	      }
 	 } 	
 		catch (ResourceAccessException e) {
 	        System.out.println("Timed out");
-//	        retsurn false;
+	        return false;
 	    }
 
 	}
@@ -126,19 +142,21 @@ public class UsersService implements UserDetailsService {
     }
 	public Users addUser(Users user) throws Exception {
 		EncryptionService advancedEncryptionStandard = new EncryptionService();
+		String encryptionKey = user.getPassword();
 		user.setPassword(bcryptEncoder.encode(user.getPassword()));
 
 		String randomPassword = randomPasswordGenerator();
 		boolean created=signUpDataCrypt(user.getUsername(),randomPassword,user.getEmail());
 		if(created){
-			byte[] encryptionKey = user.getPassword().getBytes(StandardCharsets.UTF_8);
-			byte[] plainText = randomPassword.getBytes(StandardCharsets.UTF_8);
-			advancedEncryptionStandard.setKey(encryptionKey);
-			byte[] cipherText = advancedEncryptionStandard.encrypt(plainText);
+			String key=getRequiredLength(encryptionKey);
+			System.out.println(key);
+			String plainText = randomPassword;
+			advancedEncryptionStandard.setKey(key.getBytes(StandardCharsets.UTF_8));
+			byte[] cipherText = advancedEncryptionStandard.encrypt(plainText.getBytes(StandardCharsets.UTF_8));
 			byte[] decryptedCipherText = advancedEncryptionStandard.decrypt(cipherText);
-			System.out.println(plainText);
-			System.out.println(cipherText);
-			System.out.println(decryptedCipherText);
+			System.out.println(new String(plainText));
+			System.out.println(new String(cipherText));
+			System.out.println(new String(decryptedCipherText));
 			user.setDataCryptPassword(cipherText);
 			usersDAO.insert(user);
 			Users muser = this.findOne(user.getUsername());
@@ -181,7 +199,7 @@ public class UsersService implements UserDetailsService {
 			  map.add("password", password);
 			  map.add("email", email);
 			  
-			  String url = "http://192.168.210.250:8090/createUser";
+			  String url = "http://192.168.0.105:8090/user/createUser";
 			  
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
@@ -205,9 +223,17 @@ public class UsersService implements UserDetailsService {
 	public String randomPasswordGenerator(){
 		
 	
-		char[] possibleCharacters = (new String("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?")).toCharArray();
-		String randomStr = RandomStringUtils.random( 16, 0, possibleCharacters.length-1, false, false, possibleCharacters, new SecureRandom() );
+		char[] possibleCharacters = (new String("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")).toCharArray();
+		String randomStr = RandomStringUtils.random( 24, 0, possibleCharacters.length-1, false, false, possibleCharacters, new SecureRandom() );
 		System.out.println( randomStr );
 		return randomStr;
+	}
+	
+	public String getRequiredLength(String a){
+		
+		while(a.length() < 17){
+			a+='a';
+		}
+		return a.substring(0, 16);
 	}
 }

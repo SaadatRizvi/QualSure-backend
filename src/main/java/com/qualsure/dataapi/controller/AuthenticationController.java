@@ -44,7 +44,8 @@ public class AuthenticationController {
     private UsersService userService;
 
     @RequestMapping(value = "/token/generate-token", method = RequestMethod.POST)
-    public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws AuthenticationException {
+    public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws Exception {
+        System.out.println("casasheck111");
 
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -53,17 +54,24 @@ public class AuthenticationController {
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println(loginUser.getPassword());
         final Users user = userService.findOne(loginUser.getUsername());
         final String token = jwtTokenUtil.generateToken(user);
+        boolean loogedInDataCrypt=userService.signInDataCrypt(user.getUsername(), loginUser.getPassword(), user.getDataCryptPassword());
         HttpHeaders headers = new HttpHeaders();
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/users").path(
-				"/{id}").buildAndExpand(user.getId()).toUri();
-        
-        headers.add("location", location.toString());
-        
-        return  ResponseEntity.ok()
-        .headers(headers)
-        .body(new AuthToken(token, location.toString() ));
+        if(loogedInDataCrypt){
+	        URI location = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/users").path(
+					"/{id}").buildAndExpand(user.getId()).toUri();
+	        
+	        headers.add("location", location.toString());
+	        
+	        return  ResponseEntity.ok()
+	        .headers(headers)
+	        .body(new AuthToken(token, location.toString() ));
+        }
+        else {
+    		return ResponseEntity.status(500).build();
+        }
         }
     
     @RequestMapping(value="/signup", method = RequestMethod.POST)
