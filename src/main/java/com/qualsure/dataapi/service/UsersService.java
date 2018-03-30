@@ -112,12 +112,12 @@ public class UsersService implements UserDetailsService {
 		  System.out.println(response.toString());
 	      if(response.getStatus().equals("true")){
 	    	  System.out.println("Data Cypt user logged in ");
-	    	  cache.put(new Element("token",response.getToken()));
-	    	  Element ele = cache.get("token");
+	    	  //cache.put(new Element("token",response.getToken()));
+	    	  //Element ele = cache.get("token");
 	  		
 	  		  //6. Print out the element
-	  		  String output = (ele == null ? null : ele.getObjectValue().toString());
-	  		  System.out.println(output);
+	  		  //String output = (ele == null ? null : ele.getObjectValue().toString());
+	  		  //System.out.println(output);
 //	    	  cach.setMyCache("token",response.getToken());
 //	    	  System.out.println(cach.getMyCache("token"));
 	    	  return true;
@@ -146,28 +146,32 @@ public class UsersService implements UserDetailsService {
 		user.setPassword(bcryptEncoder.encode(user.getPassword()));
 
 		String randomPassword = randomPasswordGenerator();
-		boolean created=signUpDataCrypt(user.getUsername(),randomPassword,user.getEmail());
-		if(created){
-			String key=getRequiredLength(encryptionKey);
-			System.out.println(key);
-			String plainText = randomPassword;
-			advancedEncryptionStandard.setKey(key.getBytes(StandardCharsets.UTF_8));
-			byte[] cipherText = advancedEncryptionStandard.encrypt(plainText.getBytes(StandardCharsets.UTF_8));
-			byte[] decryptedCipherText = advancedEncryptionStandard.decrypt(cipherText);
-			System.out.println(new String(plainText));
-			System.out.println(new String(cipherText));
-			System.out.println(new String(decryptedCipherText));
-			user.setDataCryptPassword(cipherText);
-			usersDAO.insert(user);
-			Users muser = this.findOne(user.getUsername());
-			University university = new University(muser.getId(), muser.getName(), "True", formFieldDAO.findAll());
-			universityDAO.insert(university);
-			
-			return user;
+		ResponseStatus response=signUpDataCrypt(user.getUsername(),randomPassword,user.getEmail());
+		if(response != null){
+			if(response.getStatus().equals("true")){
+				String key=getRequiredLength(encryptionKey);
+				System.out.println(key);
+				String plainText = randomPassword;
+				advancedEncryptionStandard.setKey(key.getBytes(StandardCharsets.UTF_8));
+				byte[] cipherText = advancedEncryptionStandard.encrypt(plainText.getBytes(StandardCharsets.UTF_8));
+				byte[] decryptedCipherText = advancedEncryptionStandard.decrypt(cipherText);
+				System.out.println(new String(plainText));
+				System.out.println(new String(cipherText));
+				System.out.println(new String(decryptedCipherText));
+				user.setDataCryptPassword(cipherText);
+				user.setPublicAddress(response.getPublicAddress());
+				usersDAO.insert(user);
+				Users muser = this.findOne(user.getUsername());
+				University university = new University(muser.getId(), muser.getName(), "True", formFieldDAO.findAll());
+				universityDAO.insert(university);
+				
+				return user;
+			}
 		}
 		else {
 			return null; 
 		}
+		return null;
 	}
 	
 	public void addMultipleUsers(List<Users> users) {
@@ -188,7 +192,7 @@ public class UsersService implements UserDetailsService {
 		return true;
 		
 	}
-	public boolean signUpDataCrypt(String userName, String password, String email) {
+	public ResponseStatus signUpDataCrypt(String userName, String password, String email) {
 		try{
         	  RestTemplate restTemplate = new RestTemplate();
 			  HttpHeaders headers = new HttpHeaders();
@@ -207,16 +211,16 @@ public class UsersService implements UserDetailsService {
 			  System.out.println(response.toString());
 		      if(response.getStatus().equals("true")){
 		    	  System.out.println("Data Cypt user created");
-		    	  return true;
+		    	  return response;
 		      }
 		      else{
 		    	  System.out.println("user not created");
-		    	  return false;
+		    	  return null;
 		      }
 	 } 	
 		catch (ResourceAccessException e) {
 	        System.out.println("Timed out");
-	        return false;
+	        return null;
 	    }
 
 		}

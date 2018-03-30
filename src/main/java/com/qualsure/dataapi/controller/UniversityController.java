@@ -46,7 +46,14 @@ public class UniversityController {
 	public ResponseStatus verifyDegreeById(@PathVariable String universityId, @RequestBody Degree degree) {
 		
 		if(degreeService.findDegreeInDb(universityId, degree) != null)
-			return new ResponseStatus("Success");
+		{
+			ResponseStatus response = degreeService.verifyDegree(degreeHash, universityId);
+			if(response != null){
+				return response;
+			}
+			else
+				return new ResponseStatus("Failed");
+		}
 		else
 			return new ResponseStatus("Failed");
 		

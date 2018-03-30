@@ -25,9 +25,19 @@ public class Users {
 	private String representativeNumber;
 	private String representativeCNIC;
 	private byte[] dataCryptPassword;
+	private String publicAddress;
+	
+	
+	public String getPublicAddress() {
+		return publicAddress;
+	}
 
-	
-	
+
+	public void setPublicAddress(String publicAddress) {
+		this.publicAddress = publicAddress;
+	}
+
+
 	public Users() {
 		
 	}
@@ -144,6 +154,7 @@ public class Users {
 		this.representativeNumber = user.representativeNumber;
 		this.representativeCNIC = user.representativeCNIC;
 		this.dataCryptPassword = user.dataCryptPassword;
+		this.publicAddress = user.publicAddress;
 
 	}
 	

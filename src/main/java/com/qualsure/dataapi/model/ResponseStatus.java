@@ -7,9 +7,28 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ResponseStatus {
 
 	private String status;
-	private String token;
+	private Message message;
 	
 	
+
+	public Message getMessage() {
+		return message;
+	}
+
+	public String getPublicAddress() {
+		return message.getPublicAddress();
+	}
+	public String getOwner() {
+		return message.getOwner();
+	}
+	public String getTimeStamp() {
+		return message.getTimeStamp();
+	}
+	public void setMessage(Message message) {
+		this.message = message;
+	}
+
+
 	public ResponseStatus() {
 	}
 
@@ -17,32 +36,20 @@ public class ResponseStatus {
 	public ResponseStatus(String status) {
 		this.status = status;
 	}
-	public ResponseStatus(String status,String token) {
-		this.status = status;
-		this.token = token;
-	}
+	
 	public String getStatus() {
 		return status;
 	}
+
+	@Override
+	public String toString() {
+		return "ResponseStatus [status=" + status + ", message=" + message + "]";
+	}
+
 
 	public void setStatus(String status) {
 		this.status = status;
 	}
 
 
-	@Override
-	public String toString() {
-		return "ResponseStatus [status=" + status + ", token=" + token + "]";
-	}
-
-
-	public String getToken() {
-		return token;
-	}
-
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-	
 }
