@@ -24,6 +24,7 @@ public class Users {
 	private String representativeName;
 	private String representativeNumber;
 	private String representativeCNIC;
+	private byte[] dataCryptPassword;
 
 	
 	
@@ -34,7 +35,7 @@ public class Users {
 	
 	public Users(String id, String username, String password, List<String> roles, String email, String active,
 			String name, String number, String address, String representativeName, String representativeNumber,
-			String representativeCNIC) {
+			String representativeCNIC, byte[] dataCryptPassword ) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
@@ -47,6 +48,8 @@ public class Users {
 		this.representativeName = representativeName;
 		this.representativeNumber = representativeNumber;
 		this.representativeCNIC = representativeCNIC;
+		this.dataCryptPassword = dataCryptPassword;
+
 	}
 
 
@@ -123,6 +126,8 @@ public class Users {
 		this.representativeName = user.representativeName;
 		this.representativeNumber = user.representativeNumber;
 		this.representativeCNIC = user.representativeCNIC;
+		this.dataCryptPassword = user.dataCryptPassword;
+
 	}
 	
 
@@ -174,5 +179,11 @@ public class Users {
 		this.roles = roles;
 	}
 	
-	
+	public byte[] getDataCryptPassword() {
+		return dataCryptPassword;
+	}
+
+	public void setDataCryptPassword(byte[] dataCryptPassword) {
+		this.dataCryptPassword = dataCryptPassword;
+	}
 }

@@ -1,5 +1,6 @@
 package com.qualsure.dataapi.service;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -12,12 +13,35 @@ import org.springframework.stereotype.Service;
 import com.qualsure.dataapi.dao.FormFieldDAO;
 import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.dao.UsersDAO;
+import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.University;
 import com.qualsure.dataapi.model.Users;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class UsersService implements UserDetailsService {
@@ -58,7 +82,41 @@ public class UsersService implements UserDetailsService {
 	public Users findOne(String username) {
 		return usersDAO.findByUsername(username);
 	}
+	public void signInDataCrypt(String username, String password, byte[] cipherText) throws Exception{
+		EncryptionService advancedEncryptionStandard = new EncryptionService();
+		advancedEncryptionStandard.setKey(password.getBytes(StandardCharsets.UTF_8));
+		byte[] decryptedCipherText = advancedEncryptionStandard.decrypt(cipherText);
+		
+		try{
+      	  RestTemplate restTemplate = new RestTemplate();
+		  HttpHeaders headers = new HttpHeaders();
+		  headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+			  
+		  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+		  map.add("username", username);
+		  map.add("password", decryptedCipherText.toString());
+			  
+		  String url = "http://192.168.210.250:8090/authenticate";
+			  
+		  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+		  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
+			  
+		  System.out.println(response.toString());
+//	      if(response.getStatus().equals("true")){
+//	    	  System.out.println("Data Cypt user created");
+//	    	  return true;
+//	      }
+//	      else{
+//	    	  System.out.println("user not created");
+//	    	  return false;
+//	      }
+	 } 	
+		catch (ResourceAccessException e) {
+	        System.out.println("Timed out");
+//	        retsurn false;
+	    }
 
+	}
 	public Users findById(String id) {
 		return usersDAO.findOne(id);
 	}
@@ -66,16 +124,32 @@ public class UsersService implements UserDetailsService {
 	public Users save(Users user) {
         return usersDAO.save(user);
     }
-	public Users addUser(Users user) {
+	public Users addUser(Users user) throws Exception {
+		EncryptionService advancedEncryptionStandard = new EncryptionService();
 		user.setPassword(bcryptEncoder.encode(user.getPassword()));
 
-		usersDAO.insert(user);
-		Users muser = this.findOne(user.getUsername());
-		University university = new University(muser.getId(), muser.getName(), "True", formFieldDAO.findAll());
-
-		universityDAO.insert(university);
-
-		return user;
+		String randomPassword = randomPasswordGenerator();
+		boolean created=signUpDataCrypt(user.getUsername(),randomPassword,user.getEmail());
+		if(created){
+			byte[] encryptionKey = user.getPassword().getBytes(StandardCharsets.UTF_8);
+			byte[] plainText = randomPassword.getBytes(StandardCharsets.UTF_8);
+			advancedEncryptionStandard.setKey(encryptionKey);
+			byte[] cipherText = advancedEncryptionStandard.encrypt(plainText);
+			byte[] decryptedCipherText = advancedEncryptionStandard.decrypt(cipherText);
+			System.out.println(plainText);
+			System.out.println(cipherText);
+			System.out.println(decryptedCipherText);
+			user.setDataCryptPassword(cipherText);
+			usersDAO.insert(user);
+			Users muser = this.findOne(user.getUsername());
+			University university = new University(muser.getId(), muser.getName(), "True", formFieldDAO.findAll());
+			universityDAO.insert(university);
+			
+			return user;
+		}
+		else {
+			return null; 
+		}
 	}
 	
 	public void addMultipleUsers(List<Users> users) {
@@ -96,5 +170,44 @@ public class UsersService implements UserDetailsService {
 		return true;
 		
 	}
+	public boolean signUpDataCrypt(String userName, String password, String email) {
+		try{
+        	  RestTemplate restTemplate = new RestTemplate();
+			  HttpHeaders headers = new HttpHeaders();
+			  headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+			  
+			  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+			  map.add("username", userName);
+			  map.add("password", password);
+			  map.add("email", email);
+			  
+			  String url = "http://192.168.210.250:8090/createUser";
+			  
+			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
+			  
+			  System.out.println(response.toString());
+		      if(response.getStatus().equals("true")){
+		    	  System.out.println("Data Cypt user created");
+		    	  return true;
+		      }
+		      else{
+		    	  System.out.println("user not created");
+		    	  return false;
+		      }
+	 } 	
+		catch (ResourceAccessException e) {
+	        System.out.println("Timed out");
+	        return false;
+	    }
 
+		}
+	public String randomPasswordGenerator(){
+		
+	
+		char[] possibleCharacters = (new String("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?")).toCharArray();
+		String randomStr = RandomStringUtils.random( 16, 0, possibleCharacters.length-1, false, false, possibleCharacters, new SecureRandom() );
+		System.out.println( randomStr );
+		return randomStr;
+	}
 }

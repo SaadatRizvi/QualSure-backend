@@ -17,6 +17,7 @@ public class University {
 	private String firstTime;
 
 
+	
 
 	University() {
 		
@@ -30,8 +31,7 @@ public class University {
 		this.formFields=new ArrayList<FormField>();
 		for (int i=0; i<formFields.size(); i++) {
 			this.formFields.add(formFields.get(i));
-		}
-	
+		}	
 	}
 	
 

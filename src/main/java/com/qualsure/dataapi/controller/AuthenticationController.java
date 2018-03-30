@@ -67,17 +67,21 @@ public class AuthenticationController {
         }
     
     @RequestMapping(value="/signup", method = RequestMethod.POST)
-    public ResponseEntity<?> Signup(@RequestBody Users user) {
+    public ResponseEntity<?> Signup(@RequestBody Users user) throws Exception {
     	Users newUser= userService.addUser(user);
+    	if(newUser == null){
+    		return ResponseEntity.status(500).build();
+    	}
+    	else{
 		 if (user == null)
-				return ResponseEntity.noContent().build();
+			return ResponseEntity.noContent().build();
 		 
 		 
 		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/users").path(
 					"/{id}").buildAndExpand(newUser.getId()).toUri();
 
 			return ResponseEntity.created(location).build();
-		 
+    	}
 	}
     
     @GetMapping("/checkUsername/{username}")
