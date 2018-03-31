@@ -80,6 +80,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 		http.authorizeRequests()
 			.antMatchers("/hello").permitAll()
+			.antMatchers("/socket","/socket/**").permitAll()
 			.antMatchers("/universities","/universities/**").permitAll()
 			.antMatchers("/validators","/validators/*").permitAll()
 			.antMatchers("/checkUsername","/checkUsername/*").permitAll()

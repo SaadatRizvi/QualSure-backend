@@ -57,9 +57,7 @@ public class AuthenticationController {
         System.out.println(loginUser.getPassword());
         final Users user = userService.findOne(loginUser.getUsername());
         final String token = jwtTokenUtil.generateToken(user);
-        boolean loogedInDataCrypt=userService.signInDataCrypt(user.getUsername(), loginUser.getPassword(), user.getDataCryptPassword());
         HttpHeaders headers = new HttpHeaders();
-        if(loogedInDataCrypt){
 	        URI location = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/users").path(
 					"/{id}").buildAndExpand(user.getId()).toUri();
 	        
@@ -68,10 +66,7 @@ public class AuthenticationController {
 	        return  ResponseEntity.ok()
 	        .headers(headers)
 	        .body(new AuthToken(token, location.toString() ));
-        }
-        else {
-    		return ResponseEntity.status(500).build();
-        }
+        
         }
     
     @RequestMapping(value="/signup", method = RequestMethod.POST)

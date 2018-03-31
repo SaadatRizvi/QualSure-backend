@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.qualsure.dataapi.DbSeeder;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.University;
@@ -17,7 +18,10 @@ import net.sf.ehcache.Element;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +35,9 @@ public class UniversityController {
 	static CacheManager cm = CacheManager.getInstance();
 
 	@Autowired
+	private static Logger logger = Logger.getLogger(DbSeeder.class);
+	
+	@Autowired
 	private UniversitiesService universitiesService;
 	
 	@Autowired
@@ -43,21 +50,24 @@ public class UniversityController {
 
 	
 	@PostMapping("/universities/{universityId}/verifyDegree")
-	public ResponseStatus verifyDegreeById(@PathVariable String universityId, @RequestBody Degree degree) {
+	public ResponseStatus verifyDegreeById(@PathVariable String universityId, @RequestBody Map<String, String> degreeDetails) {
 		
-		if(degreeService.findDegreeInDb(universityId, degree) != null)
-		{
-			ResponseStatus response = degreeService.verifyDegree(degreeHash, universityId);
+
+		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
+
+		if(degreeService.verifyDegree(universityId, degree)) {
+			ResponseStatus response = degreeService.verifyDataCryptDegree(degreeHash, universityId);
 			if(response != null){
 				return response;
 			}
-			else
-				return new ResponseStatus("Failed");
 		}
 		else
 			return new ResponseStatus("Failed");
+
+		return new ResponseStatus("Failed");
+		}
 		
-	}
+	
 	
 	@GetMapping("/hello")
 	public String hello() {
@@ -80,13 +90,23 @@ public class UniversityController {
 	//A POST Service should return a status of created (201)
 	//when the resource creation is successful.
 	@PostMapping("universities/{universityId}/degrees")
-	public ResponseEntity<?> addDegree(@PathVariable String universityId, @RequestBody Degree degree) {
-		 Degree newDegree= degreeService.addDegree(universityId, degree);
-		 if (degree == null)
+	public ResponseEntity<?> addDegree(@PathVariable String universityId, @RequestBody Map<String, String> degreeDetails) {
+		
+//		String[] keys = degree.keySet().toArray(new String[0]);
+//		for(int i=0;i<keys.length;i++) {
+//			System.out.println(keys[i]);
+//
+//			System.out.println(degree.get(keys[i]));
+//		}
+//		
+//		return ResponseEntity.noContent().build();
+		
+		Degree addedDegree= degreeService.addDegree(universityId, degreeDetails);
+		 if (addedDegree == null)
 				return ResponseEntity.noContent().build();
 		 
 		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
-					"/{id}").buildAndExpand(newDegree.getId()).toUri();
+					"/{id}").buildAndExpand(addedDegree.getId()).toUri();
 
 			return ResponseEntity.created(location).build();
 		 
