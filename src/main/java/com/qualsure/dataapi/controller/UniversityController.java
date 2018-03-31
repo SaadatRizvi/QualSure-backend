@@ -6,19 +6,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.qualsure.dataapi.DbSeeder;
+import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.University;
+import com.qualsure.dataapi.model.Users;
 //import com.qualsure.dataapi.service.CacheService;
 import com.qualsure.dataapi.service.DegreeService;
 import com.qualsure.dataapi.service.UniversitiesService;
 import com.qualsure.dataapi.service.UsersService;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 public class UniversityController {
-	static CacheManager cm = CacheManager.getInstance();
 
 	@Autowired
 	private static Logger logger = Logger.getLogger(DbSeeder.class);
@@ -45,6 +45,8 @@ public class UniversityController {
 	@Autowired
 	private DegreeService degreeService;
 	
+	@Autowired
+	private UsersService userService;
 
 
 	@GetMapping("/universities/{universityId}/formFields")
@@ -54,16 +56,18 @@ public class UniversityController {
 
 	
 	@PostMapping("/universities/{universityId}/verifyDegree")
-	public ResponseStatus verifyDegreeById(@PathVariable String universityId, @RequestBody Map<String, String> degreeDetails) {
+	public  Map<String, String> verifyDegreeById(@PathVariable String universityId, @RequestBody Map<String, String> degreeDetails) {
 		
 
 //		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
 
 		if(degreeService.verifyDegree(universityId, degreeDetails)) {
-			return new ResponseStatus("Success");
+			System.out.println("successs");
+			return Collections.singletonMap("status", "Success");
 		}
+		System.out.println("2");
 
-		return new ResponseStatus("Failed");
+		return Collections.singletonMap("status", "Failed");
 		}
 		
 	
@@ -73,6 +77,19 @@ public class UniversityController {
 		return "Hoila";
 	}
 	
+	@GetMapping("/universities/{universityId}/getPublicAddress")
+	public  Map<String, String> getPublicAddress(@PathVariable String universityId) {
+		Users user= userService.findById(universityId);
+		if(user == null) return Collections.singletonMap("publicAddress", "UniversityIdNull" );
+		if(user.getPublicAddress().isEmpty()) return Collections.singletonMap("publicAddress", "PublicAddressNotFound" );
+		
+		return Collections.singletonMap("publicAddress", user.getPublicAddress());
+	}
+	@GetMapping("/universities/{universityId}/getAccountBalance")
+	public   Map<String, String> getAccountBalance(@PathVariable String universityId) {
+		ResponseStatus response= userService.getAccountBalance(universityId);
+		return Collections.singletonMap("accountBalance", response.getOwner());
+	}
 	//@PreAuthorize("hasAnyRole('ADMIN')")
 	
 	@GetMapping("universities/{universityId}/degrees/{degreeId}")

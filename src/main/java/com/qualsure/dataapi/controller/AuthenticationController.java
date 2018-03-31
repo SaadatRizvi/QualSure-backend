@@ -46,6 +46,7 @@ public class AuthenticationController {
     @RequestMapping(value = "/token/generate-token", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws Exception {
         System.out.println("casasheck111");
+        System.out.println(loginUser.getPassword());
 
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

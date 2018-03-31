@@ -88,6 +88,39 @@ public class UsersService implements UserDetailsService {
 	public Users findOne(String username) {
 		return usersDAO.findByUsername(username);
 	}
+	public ResponseStatus getAccountBalance(String userId){
+		Users user=findById(userId);
+	
+		try{
+      	  RestTemplate restTemplate = new RestTemplate();
+			  HttpHeaders headers = new HttpHeaders();
+			  headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+			  
+			  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+			  map.add("username", user.getUsername());
+			 
+			  
+			  String url = "http://192.168.100.28:8090/user/checkBalance";
+			  
+			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
+			  
+			  System.out.println(response.toString());
+		      if(response.getStatus().equals("true")){
+		    	  System.out.println("balance" + response.getMessage());
+		    	  return response;
+		      }
+		      else{
+		    	  System.out.println("user not created");
+		    	  return null;
+		      }
+	 } 	
+		catch (ResourceAccessException e) {
+	        System.out.println("Timed out");
+	        return null;
+	    }
+
+	}
 	public boolean signInDataCrypt(String username, String password, byte[] cipherText) throws Exception{
 		byte[] decryptedCipherText = decryptPassword(password, cipherText);
 		Cache cache = cm.getCache("cache1");

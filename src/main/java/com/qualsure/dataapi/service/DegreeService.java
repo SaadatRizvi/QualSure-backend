@@ -153,14 +153,17 @@ public class DegreeService {
 				return false;
 			}
 		}
-		ResponseStatus rs =verifyDataCryptDegree(degree.getHash(),degree.getUniversityId());
-		if(rs == null){
+		boolean rs=verifyDataCryptDegree(degree.getHash(),degree.getUniversityId());
+		System.out.println(rs);
+
+		if(rs == false){
 			return false;
 		}
+		System.out.println(rs);
 		return true;
 	}
 	
-	public ResponseStatus verifyDataCryptDegree(String degreeHash,String universityId){
+	public boolean verifyDataCryptDegree(String degreeHash,String universityId){
 		try{
 	      	  RestTemplate restTemplate = new RestTemplate();
 			  HttpHeaders headers = new HttpHeaders();
@@ -178,18 +181,19 @@ public class DegreeService {
 		      if(response.getStatus().equals("true")){
 		    	  Users user = userService.findById(universityId);
 		    	  if(user.getPublicAddress().equals(response.getOwner())){
-		    		  return response;
+		    		  System.out.println("true------------------->>>> degree verified");
+		    		  return true;
 		    	  }
 		    	  else 
-		    		  return null;
+		    		  return false;
 		      }
 		      else {
-		    	  return null;
+		    	  return false;
 		      }
 		}
 		catch (ResourceAccessException e) {
 	        System.out.println("Timed out");
-	        return null;
+	        return false;
 	    }
 	}
 	
