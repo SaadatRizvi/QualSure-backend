@@ -4,10 +4,13 @@ import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -49,13 +52,27 @@ public class EncryptionService {
 	     *
 	     * @param cipherText The data to decrypt
 	     */
-	    public byte[] decrypt(byte[] cipherText) throws Exception
+	    public byte[] decrypt(byte[] cipherText) 
 	    {
 	        SecretKeySpec secretKey = new SecretKeySpec(key, ALGORITHM);
-	        Cipher cipher = Cipher.getInstance(ALGORITHM);
-	        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+	        Cipher cipher;
+			 
+	        try {
+				cipher = Cipher.getInstance(ALGORITHM);
 
-	        return cipher.doFinal(cipherText);
+				cipher.init(Cipher.DECRYPT_MODE, secretKey);
+				return cipher.doFinal(cipherText);
+			} catch (InvalidKeyException e1) {
+				e1.printStackTrace();
+			}
+	        catch (NoSuchAlgorithmException | NoSuchPaddingException e1) {
+				e1.printStackTrace();
+			}
+	        catch (IllegalBlockSizeException | BadPaddingException e) {
+				e.printStackTrace();
+			}
+	        
+	        return new byte[0];
 	    }
 	}
 	

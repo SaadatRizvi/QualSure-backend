@@ -123,6 +123,8 @@ public class DbSeeder implements CommandLineRunner {
 			new Users("3","admin","$2a$04$aOSd.znG7tUQSFTkHc07ZeN/mUI4GAXu6yxxeJ0qfxkmtQ0UbBvuy",new ArrayList<String>(Arrays.asList("USER","ADMIN")),
 					"admin@qualsure.com","true","QualSure Inc.","090078601","123,admin,Swabi","Lalo","03312345676","123456789")
 			));
+	
+	
 			/*
 			 "username":"lums",
 			 "password":"abc",

@@ -1,6 +1,7 @@
 package com.qualsure.dataapi.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -11,6 +12,7 @@ import com.qualsure.dataapi.model.University;
 //import com.qualsure.dataapi.service.CacheService;
 import com.qualsure.dataapi.service.DegreeService;
 import com.qualsure.dataapi.service.UniversitiesService;
+import com.qualsure.dataapi.service.UsersService;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -42,6 +44,8 @@ public class UniversityController {
 	
 	@Autowired
 	private DegreeService degreeService;
+	
+
 
 	@GetMapping("/universities/{universityId}/formFields")
 	public University getFormFieldsByUniId(@PathVariable String universityId) {
@@ -53,16 +57,11 @@ public class UniversityController {
 	public ResponseStatus verifyDegreeById(@PathVariable String universityId, @RequestBody Map<String, String> degreeDetails) {
 		
 
-		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
+//		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
 
-		if(degreeService.verifyDegree(universityId, degree)) {
-			ResponseStatus response = degreeService.verifyDataCryptDegree(degreeHash, universityId);
-			if(response != null){
-				return response;
-			}
+		if(degreeService.verifyDegree(universityId, degreeDetails)) {
+			return new ResponseStatus("Success");
 		}
-		else
-			return new ResponseStatus("Failed");
 
 		return new ResponseStatus("Failed");
 		}
@@ -90,18 +89,13 @@ public class UniversityController {
 	//A POST Service should return a status of created (201)
 	//when the resource creation is successful.
 	@PostMapping("universities/{universityId}/degrees")
-	public ResponseEntity<?> addDegree(@PathVariable String universityId, @RequestBody Map<String, String> degreeDetails) {
+	public ResponseEntity<?> addDegree(@PathVariable String universityId, @RequestBody Map<String, String> responseObj) {
+			
+		String password = responseObj.get("password");
+		responseObj.remove("password");
 		
-//		String[] keys = degree.keySet().toArray(new String[0]);
-//		for(int i=0;i<keys.length;i++) {
-//			System.out.println(keys[i]);
-//
-//			System.out.println(degree.get(keys[i]));
-//		}
-//		
-//		return ResponseEntity.noContent().build();
+		Degree addedDegree= degreeService.addDegree(universityId, password, responseObj);
 		
-		Degree addedDegree= degreeService.addDegree(universityId, degreeDetails);
 		 if (addedDegree == null)
 				return ResponseEntity.noContent().build();
 		 

@@ -89,9 +89,7 @@ public class UsersService implements UserDetailsService {
 		return usersDAO.findByUsername(username);
 	}
 	public boolean signInDataCrypt(String username, String password, byte[] cipherText) throws Exception{
-		EncryptionService advancedEncryptionStandard = new EncryptionService();
-		advancedEncryptionStandard.setKey(getRequiredLength(password).getBytes(StandardCharsets.UTF_8));
-		byte[] decryptedCipherText = advancedEncryptionStandard.decrypt(cipherText);
+		byte[] decryptedCipherText = decryptPassword(password, cipherText);
 		Cache cache = cm.getCache("cache1");
 		System.out.println(new String(cipherText, StandardCharsets.UTF_8));
 		System.out.println(new String(decryptedCipherText, StandardCharsets.UTF_8));
@@ -132,6 +130,13 @@ public class UsersService implements UserDetailsService {
 	        return false;
 	    }
 
+	}
+
+	public byte[] decryptPassword(String password, byte[] cipherText)  {
+		EncryptionService advancedEncryptionStandard = new EncryptionService();
+		advancedEncryptionStandard.setKey(getRequiredLength(password).getBytes(StandardCharsets.UTF_8));
+		return advancedEncryptionStandard.decrypt(cipherText);
+		
 	}
 	public Users findById(String id) {
 		return usersDAO.findOne(id);
@@ -174,14 +179,11 @@ public class UsersService implements UserDetailsService {
 		return null;
 	}
 	
-	public void addMultipleUsers(List<Users> users) {
+	public void addMultipleUsers(List<Users> users) throws Exception {
 		
 		for(Users user: users) {
-			usersDAO.insert(user);
-			Users muser = this.findOne(user.getUsername());
-			University university = new University(muser.getId(), muser.getName(), "True", formFieldDAO.findAll());
-
-			universityDAO.insert(university);
+			addUser(user);
+			
 		}
 		
 	}
@@ -203,7 +205,7 @@ public class UsersService implements UserDetailsService {
 			  map.add("password", password);
 			  map.add("email", email);
 			  
-			  String url = "http://192.168.0.105:8090/user/createUser";
+			  String url = "http://192.168.100.28:8090/user/createUser";
 			  
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );

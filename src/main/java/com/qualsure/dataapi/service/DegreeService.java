@@ -1,6 +1,7 @@
 package com.qualsure.dataapi.service;
 
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -33,6 +35,14 @@ public class DegreeService {
 	@Autowired
     private UsersService userService;
 	
+	
+	@Autowired
+	private HashService hashService;
+	
+	@Autowired
+	private BCryptPasswordEncoder encoder;
+	
+	
 	public List<Degree> getAllDegrees(){
 	
 		
@@ -44,11 +54,69 @@ public class DegreeService {
 		return degreeDAO.findByUniversityIdAndId(universityId, degreeId);
 	}
 
-	public Degree addDegree(String universityId, Map<String, String>  degreeDetails) {
-		Degree newDegree = new Degree(universityId,degreeDetails,"tempHash");
+	public Degree addDegree(String universityId, String password, Map<String, String>  degreeDetails)   {
+		Users user= userService.findById(universityId);
+		if(!verifyLogin(user,password))
+			return null;
+		
+		String hash = hashService.getHash(degreeDetails);
+
+		if(!addDataCryptDegree(user,password,hash)) return null;
+		Degree newDegree = new Degree(universityId,degreeDetails, hash);
 		degreeDAO.insert(newDegree);
 		return newDegree;
 	}
+	
+	public boolean verifyLogin (Users user, String password) {
+		return encoder.matches(password, user.getPassword());
+	}
+	
+	
+	
+	public boolean addDataCryptDegree(Users user, String password, String hash){
+		
+		
+		byte[] decryptedCipherText = userService.decryptPassword(password, user.getDataCryptPassword());
+		
+		try{
+	      	  RestTemplate restTemplate = new RestTemplate();
+			  HttpHeaders headers = new HttpHeaders();
+			  headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+				  
+			  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+			  map.add("username", user.getUsername());
+			  map.add("password",  new String(decryptedCipherText, StandardCharsets.UTF_8));  
+			  map.add("hash", hash);
+			  String url = "http://192.168.100.28:8090/addFile";
+				   
+			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
+				  
+			  System.out.println(response.toString());
+		      if(response.getStatus().equals("true")){
+		    	 return true;
+		      }
+		      else {
+		    	  return false;
+		      }
+		}
+		catch (ResourceAccessException e) {
+	        System.out.println("Timed out");
+	        return false;
+	    }
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public void updateDegree( Degree degree) {
 		degreeDAO.save(degree);
@@ -64,26 +132,30 @@ public class DegreeService {
 	}
 	
 
-	public boolean verifyDegree(String universityId, Degree degree) {
+	public boolean verifyDegree(String universityId, Map<String, String> degreeDetails) {
+		
+		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
+
 		String studentName = degree.getStudentName();
 		String gpa = degree.getGpa();
 		String graduationYear = degree.getGraduationYear();
 		String degreeType = degree.getDegreeType();
 		String degreeName = degree.getDegreeName();
 		String CNIC = degree.getCNIC();
+		
+		degree.setHash(hashService.getHash(degreeDetails));
 
 		Degree returnedDegree= degreeDAO.findByFixedFields(universityId, studentName, gpa, graduationYear, degreeType, degreeName,CNIC);
 		
 		String[] keys = returnedDegree.getDegreeDetails().keySet().toArray(new String[0]);
 		for(int i=0;i<keys.length;i++) {
 			if(!returnedDegree.getDegreeDetails().get(keys[i]).equals(degree.getDegreeDetails().get(keys[i])) ) {
-//				logger.info("Returned degree "+ returnedDegree.getDegreeDetails().get(keys[i]));
-//
-//				logger.info("Returned degree "+ returnedDegree.getDegreeDetails().get(keys[i]));
-//				logger.info("degree "+ degree.getDegreeDetails().get(keys[i]));
-
 				return false;
 			}
+		}
+		ResponseStatus rs =verifyDataCryptDegree(degree.getHash(),degree.getUniversityId());
+		if(rs == null){
+			return false;
 		}
 		return true;
 	}
@@ -97,7 +169,7 @@ public class DegreeService {
 			  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
 			  map.add("hash", degreeHash);
 				  
-			  String url = "http://192.168.0.105:8090/verifyFile";
+			  String url = "http://192.168.100.28:8090/verifyFile";
 				   
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );

@@ -5,6 +5,9 @@ public class Message {
 	private String timeStamp;
 	private String publicAddress;
 	
+	public Message(){
+		
+	}
 	public Message(String owner) {
 		super();
 		this.owner = owner;
