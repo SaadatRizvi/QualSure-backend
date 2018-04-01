@@ -150,11 +150,11 @@ public class DbSeeder implements CommandLineRunner {
 //				new University("30", "NUST", "False", Arrays.asList())
 //				));
 		//drop all
-		this.degreeDAO.deleteAll();
+		//this.degreeDAO.deleteAll();
 //		this.usersDAO.deleteAll();
 //		this.universityDAO.deleteAll();
-		this.validatorDAO.deleteAll();
-		this.formAttributesDAO.deleteAll();
+	//	this.validatorDAO.deleteAll();
+	//	this.formAttributesDAO.deleteAll();
 
 		
 		
@@ -163,8 +163,8 @@ public class DbSeeder implements CommandLineRunner {
 	//	this.usersService.(users);
 	//	this.universityDAO.save(universities);
 	//	this.usersService.addMultipleUsers(users);
-		this.validatorDAO.save(validators);
-		this.formAttributesDAO.save(formFields);
+		//this.validatorDAO.save(validators);
+		//this.formAttributesDAO.save(formFields);
 //		this.usersService.addMultipleUsers(users);
 		
 		//add a cache for the whole program

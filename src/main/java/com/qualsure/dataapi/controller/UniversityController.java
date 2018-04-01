@@ -20,6 +20,7 @@ import com.qualsure.dataapi.service.UsersService;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,10 +61,15 @@ public class UniversityController {
 		
 
 //		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
-
-		if(degreeService.verifyDegree(universityId, degreeDetails)) {
-			System.out.println("successs");
-			return Collections.singletonMap("status", "Success");
+		System.out.println("in verify");
+		String degreeId=degreeService.verifyDegree(universityId, degreeDetails);
+		if(degreeId != null) {
+			System.out.println(degreeId);
+			Map<String,String> hm=new HashMap<String, String>();  
+			hm.put("status", "Success");
+			hm.put("degreeId", degreeId );
+			return hm;
+			
 		}
 		System.out.println("2");
 

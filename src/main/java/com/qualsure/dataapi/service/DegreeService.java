@@ -59,6 +59,7 @@ public class DegreeService {
 		if(!verifyLogin(user,password))
 			return null;
 		
+		degreeDetails.put("universityId", universityId);
 		String hash = hashService.getHash(degreeDetails);
 
 		if(!addDataCryptDegree(user,password,hash)) return null;
@@ -132,7 +133,7 @@ public class DegreeService {
 	}
 	
 
-	public boolean verifyDegree(String universityId, Map<String, String> degreeDetails) {
+	public String verifyDegree(String universityId, Map<String, String> degreeDetails) {
 		
 		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
 
@@ -142,25 +143,37 @@ public class DegreeService {
 		String degreeType = degree.getDegreeType();
 		String degreeName = degree.getDegreeName();
 		String CNIC = degree.getCNIC();
-		
+		degreeDetails.put("universityId", universityId);
 		degree.setHash(hashService.getHash(degreeDetails));
+		String degreeId;
+		try{
+			Degree returnedDegree= degreeDAO.findByFixedFields(universityId, studentName, gpa, graduationYear, degreeType, degreeName,CNIC);
 
-		Degree returnedDegree= degreeDAO.findByFixedFields(universityId, studentName, gpa, graduationYear, degreeType, degreeName,CNIC);
-		
-		String[] keys = returnedDegree.getDegreeDetails().keySet().toArray(new String[0]);
-		for(int i=0;i<keys.length;i++) {
-			if(!returnedDegree.getDegreeDetails().get(keys[i]).equals(degree.getDegreeDetails().get(keys[i])) ) {
-				return false;
-			}
+			System.out.println("step1");
+			degreeId = returnedDegree.getId();
+
+			String[] keys = returnedDegree.getDegreeDetails().keySet().toArray(new String[0]);
+			System.out.println("step2");
+	
+				for(int i=0;i<keys.length;i++) {
+					if(!returnedDegree.getDegreeDetails().get(keys[i]).equals(degree.getDegreeDetails().get(keys[i])) ) {
+						return null;
+					}
+				}
+			
 		}
+		catch(NullPointerException e){
+			return null;
+		}
+		System.out.println("sdsdsdsdsdsdsd");
 		boolean rs=verifyDataCryptDegree(degree.getHash(),degree.getUniversityId());
 		System.out.println(rs);
 
 		if(rs == false){
-			return false;
+			return null;
 		}
 		System.out.println(rs);
-		return true;
+		return degreeId;
 	}
 	
 	public boolean verifyDataCryptDegree(String degreeHash,String universityId){
