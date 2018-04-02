@@ -3,6 +3,7 @@ package com.qualsure.dataapi.model;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "Degrees")
@@ -11,21 +12,30 @@ public class Degree {
 	@Id 
 	private String id;
 	private String universityId;
-	private Map<String, String> degreeDetails;
+	
+	//@Indexed(unique=true) 
 	private String hash;
+	private Map<String, String> degreeDetails;
+	private String status;
 
 
 	
 	public Degree() {
 		
 	}
+	public Degree( String universityId, Map<String, String> degreeDetails, String hash, String status) {
+		this.universityId = universityId;
+		this.degreeDetails = degreeDetails;
+		this.hash = hash;
+		this.status = status;
+	}
+
 	public Degree( String universityId, Map<String, String> degreeDetails, String hash) {
 		this.universityId = universityId;
 		this.degreeDetails = degreeDetails;
 		this.hash = hash;
 	}
 
-	
 
 	public Degree(String id, String universityId, Map<String, String> degreeDetails, String hash) {
 		this.id = id;
@@ -36,6 +46,12 @@ public class Degree {
 
 
 
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
 	public String getUniversityId() {
 		return universityId;
 	}

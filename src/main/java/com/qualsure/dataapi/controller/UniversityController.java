@@ -8,6 +8,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.qualsure.dataapi.DbSeeder;
 import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.model.Degree;
+import com.qualsure.dataapi.model.MultipleDegree;
 import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.University;
 import com.qualsure.dataapi.model.Users;
@@ -128,6 +129,25 @@ public class UniversityController {
 			return ResponseEntity.created(location).build();
 		 
 	}
+	
+	
+	
+	@PostMapping("universities/{universityId}/multipleDegrees")
+	public List<List<String>> multipleAddDegree(@PathVariable String universityId, @RequestBody MultipleDegree responseObj) {
+					
+		List<List<String>> listOLists= degreeService.addMultipleDegree(universityId, responseObj);
+
+			return listOLists;
+		 
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	@GetMapping("/universities/{universityId}/degrees")

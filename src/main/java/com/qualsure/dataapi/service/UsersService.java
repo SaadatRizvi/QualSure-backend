@@ -100,7 +100,7 @@ public class UsersService implements UserDetailsService {
 			  map.add("username", user.getUsername());
 			 
 			  
-			  String url = "http://192.168.100.28:8090/user/checkBalance";
+			  String url = "http://localhost.100.28:8090/user/checkBalance";
 			  
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
@@ -238,7 +238,7 @@ public class UsersService implements UserDetailsService {
 			  map.add("password", password);
 			  map.add("email", email);
 			  
-			  String url = "http://192.168.100.28:8090/user/createUser";
+			  String url = "http://localhost:8090/user/createUser";
 			  
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );

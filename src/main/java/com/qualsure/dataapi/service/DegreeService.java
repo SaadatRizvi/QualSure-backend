@@ -2,6 +2,8 @@ package com.qualsure.dataapi.service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +19,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.qualsure.dataapi.DbSeeder;
 import com.qualsure.dataapi.dao.DegreeDAO;
 import com.qualsure.dataapi.model.Degree;
+import com.qualsure.dataapi.model.MultipleDegree;
 import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.Users;
 
@@ -55,23 +61,132 @@ public class DegreeService {
 	}
 
 	public Degree addDegree(String universityId, String password, Map<String, String>  degreeDetails)   {
+		
 		Users user= userService.findById(universityId);
 		if(!verifyLogin(user,password))
 			return null;
 		
 		degreeDetails.put("universityId", universityId);
 		String hash = hashService.getHash(degreeDetails);
-
-		if(!addDataCryptDegree(user,password,hash)) return null;
-		Degree newDegree = new Degree(universityId,degreeDetails, hash);
+		List<Degree> degree = degreeDAO.findByHash(hash);
+		Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
 		degreeDAO.insert(newDegree);
-		return newDegree;
+		if(degree.isEmpty()){
+			if(!addDataCryptDegree(user,password,hash)){
+				newDegree.setStatus("Failed");
+				degreeDAO.insert(newDegree);
+				return null;
+			}
+			newDegree.setStatus("Success");
+			degreeDAO.insert(newDegree);
+			return newDegree;
+		}
+		newDegree.setStatus("Failed");
+		degreeDAO.insert(newDegree);
+		return null;
 	}
 	
 	public boolean verifyLogin (Users user, String password) {
 		return encoder.matches(password, user.getPassword());
 	}
 	
+	public List<List<String>> addMultipleDegree(String universityId, MultipleDegree responseObj) {
+		Users user= userService.findById(universityId);
+		if(!verifyLogin(user,responseObj.getPassword()))
+			return null;
+		
+		List<String> hashList = new ArrayList<String>();
+		List<String> hashListHashExistFailed = new ArrayList<String>();
+		List<String> hashListDataCryptFailed = new ArrayList<String>();
+		List<String> hashListSuccess = new ArrayList<String>();
+
+
+		for(Map<String,String> degreeDetails: responseObj.getDegreeDetails()){
+			degreeDetails.put("universityId", universityId);
+			String hash = hashService.getHash(degreeDetails);
+			List<Degree> degree = degreeDAO.findByHash(hash);
+			if(degree.isEmpty()){
+				Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
+				degreeDAO.insert(newDegree);
+				hashList.add(hash);
+			}
+			else{
+				hashListHashExistFailed.add(hash);
+				Degree newDegree = new Degree(universityId,degreeDetails, hash,"Failed");
+				degreeDAO.insert(newDegree);
+			}	
+		}
+		
+		Map<String,String> response = addDataCryptMultipleDegree(user, responseObj.getPassword(), hashList);
+		
+		for (Map.Entry<String, String> entry : response.entrySet())
+		{
+		    System.out.println(entry.getKey() + "/" + entry.getValue());
+		    if(entry.getValue().equals("false")){
+		    	hashListDataCryptFailed.add(entry.getKey());
+				List<Degree> degree = degreeDAO.findByHash(entry.getKey());
+				degree.get(0).setStatus("Failed");
+				this.updateDegree(degree.get(0));
+		    }
+		    else{
+		    	hashListSuccess.add(entry.getKey());
+				List<Degree> degree = degreeDAO.findByHash(entry.getKey());
+				degree.get(0).setStatus("Success");
+				this.updateDegree(degree.get(0));
+		    }
+		}
+		
+		List<List<String>> listOLists = new ArrayList<List<String>>();
+		
+		listOLists.add(hashListHashExistFailed);
+		listOLists.add(hashListDataCryptFailed);
+		listOLists.add(hashListSuccess);
+
+				
+		return listOLists; 
+	}
+	
+	public ObjectNode makeJson(Users user, String password, List<String> hashList){
+		byte[] decryptedCipherText = userService.decryptPassword(password, user.getDataCryptPassword());
+
+	    ObjectNode jsonBody = JsonNodeFactory.instance.objectNode();
+	    jsonBody.put("username", user.getUsername());
+	    jsonBody.put("password",  new String(decryptedCipherText, StandardCharsets.UTF_8));  
+	    ArrayNode arrayNode = jsonBody.putArray("hash");
+	    for (String item : hashList) {
+	        arrayNode.add(item);
+	    }
+	    
+
+	    return jsonBody;
+	}
+	
+	public Map<String,String> addDataCryptMultipleDegree(Users user, String password, List<String> hashList){
+		
+		try{
+	      	  RestTemplate restTemplate = new RestTemplate();
+			  HttpHeaders headers = new HttpHeaders();
+			  headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+			  
+			  ObjectNode jsonBody = makeJson(user,password, hashList);
+			  String url = "http://localhost:8090/addMultipleFiles";
+				   
+			  System.out.println(jsonBody.toString());
+			  HttpEntity<String>request = new HttpEntity<>(jsonBody.toString(), headers);
+			  
+			  @SuppressWarnings("unchecked")    // Possible error here
+			  Map<String,String> response =  restTemplate.postForObject( url, request , HashMap.class );
+			  
+			  System.out.println(response.toString());
+			  return response;
+		}
+		catch (ResourceAccessException e) {
+	        System.out.println("Timed out");
+	        e.printStackTrace();
+	        return null;
+	    }	
+		
+	}
 	
 	
 	public boolean addDataCryptDegree(Users user, String password, String hash){
@@ -88,7 +203,7 @@ public class DegreeService {
 			  map.add("username", user.getUsername());
 			  map.add("password",  new String(decryptedCipherText, StandardCharsets.UTF_8));  
 			  map.add("hash", hash);
-			  String url = "http://192.168.100.28:8090/addFile";
+			  String url = "http://localhost:8090/addFile";
 				   
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
@@ -147,7 +262,7 @@ public class DegreeService {
 		degree.setHash(hashService.getHash(degreeDetails));
 		String degreeId;
 		try{
-			Degree returnedDegree= degreeDAO.findByFixedFields(universityId, studentName, gpa, graduationYear, degreeType, degreeName,CNIC);
+			Degree returnedDegree= degreeDAO.findByFixedFields(universityId, studentName, gpa, graduationYear, degreeType, degreeName,CNIC,"Success");
 
 			System.out.println("step1");
 			degreeId = returnedDegree.getId();
@@ -185,7 +300,7 @@ public class DegreeService {
 			  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
 			  map.add("hash", degreeHash);
 				  
-			  String url = "http://192.168.100.28:8090/verifyFile";
+			  String url = "http://localhost:8090/verifyFile";
 				   
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
@@ -209,5 +324,7 @@ public class DegreeService {
 	        return false;
 	    }
 	}
+
+
 	
 }
