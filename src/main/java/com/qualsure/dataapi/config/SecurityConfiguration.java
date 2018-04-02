@@ -76,15 +76,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
 		http.csrf().disable();
 		http.authorizeRequests()
 			.antMatchers("/hello").permitAll()
+			.antMatchers("/getDataCryptIP").permitAll()
+			.antMatchers("/setDataCryptIP").permitAll()
 			.antMatchers("/socket","/socket/**").permitAll()
 			.antMatchers("/universities","/universities/**").permitAll()
 			.antMatchers("/validators","/validators/*").permitAll()
 			.antMatchers("/checkUsername","/checkUsername/*").permitAll()
-
 			.antMatchers("/fixedFormFields","/fixedFormFields/*").permitAll()
 			.antMatchers("/token/*", "/signup" ).permitAll()
 			.anyRequest().authenticated()

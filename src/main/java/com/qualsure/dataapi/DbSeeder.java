@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +25,13 @@ import net.sf.ehcache.CacheManager;
 
 import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.model.FormField;
+import com.qualsure.dataapi.model.NetworkConfig;
 import com.qualsure.dataapi.model.University;
 
 import org.apache.log4j.Logger;
 
 @Service
-public class DbSeeder implements CommandLineRunner {
+public class DbSeeder implements ApplicationRunner {
 
 	@SuppressWarnings("unused")
 	@Autowired
@@ -141,18 +144,34 @@ public class DbSeeder implements CommandLineRunner {
 
 	
 	@Override
-	public void run(String... arg0) throws Exception {
+	public void run(ApplicationArguments args) throws Exception {
 
-		
+		 logger.info("Application started with command-line arguments: {}" + Arrays.toString(args.getSourceArgs()));
+	     logger.info("NonOptionArgs: {}" + args.getNonOptionArgs());
+	     logger.info("OptionNames: {}" + args.getOptionNames());
+	     
+	     logger.info("CmdArg server =" + args.getOptionValues("server"));
+
+	     if(args.getOptionValues("server") == null) {
+	     	NetworkConfig.setDatacryptIP("http://192.168.100.28:8090");
+	     }
+	     else {
+	     	NetworkConfig.setDatacryptIP("http://"+args.getOptionValues("server").get(0));
+	     }
+    //	System.out.println("YOLOYOYOYOYOLYOYOY");
+	     logger.info("DataCrypt Server IP set to " + NetworkConfig.getDatacryptIP());
+    //	System.out.println("YOLOYOYOYOYOLYOYOY");
+
+    	
 //		  List<University> universities = new ArrayList<>(Arrays.asList(
 //				new University("10", "GIKI", "True", formFields),
 //				new University("20", "LUMS", "True", Arrays.asList()),
 //				new University("30", "NUST", "False", Arrays.asList())
 //				));
 		//drop all
-		this.degreeDAO.deleteAll();
-		this.usersDAO.deleteAll();
-		this.universityDAO.deleteAll();
+//		this.degreeDAO.deleteAll();
+//		this.usersDAO.deleteAll();
+//		this.universityDAO.deleteAll();
 		this.validatorDAO.deleteAll();
 		this.formAttributesDAO.deleteAll();
 
