@@ -3,6 +3,7 @@ package com.qualsure.dataapi.controller;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,9 +73,9 @@ public class AuthenticationController {
     
     @RequestMapping(value="/signup", method = RequestMethod.POST)
     public ResponseEntity<?> Signup(@RequestBody Users user) throws Exception {
-    	Users newUser= userService.addUser(user);
-    	if(newUser == null){
-    		return ResponseEntity.status(500).build();
+    	Map<String, String> response= userService.addUser(user);
+    	if(response.get("status").equals("false")){
+    		return ResponseEntity.status(500).body(response);
     	}
     	else{
 		 if (user == null)
@@ -82,15 +83,18 @@ public class AuthenticationController {
 		 
 		 
 		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/users").path(
-					"/{id}").buildAndExpand(newUser.getId()).toUri();
+					"/{id}").buildAndExpand(response.get("userId")).toUri();
 
 			return ResponseEntity.created(location).build();
     	}
 	}
     
     @GetMapping("/checkUsername/{username}")
-	public Map<String, Boolean> getAllUsers(@PathVariable String username) {
-    	return Collections.singletonMap("success", userService.findIfAvailable(username));
+	public Map<String, String> getAllUsers(@PathVariable String username) {
+		Map<String, String> response= new HashMap<String,String>();
+		
+		
+    	return response;
     }
 
     

@@ -8,13 +8,13 @@ public class ResponseStatus {
 
 	private String status;
 	private Message message;
-	
+	private String errorMessage;
 	
 
 	public Message getMessage() {
 		return message;
 	}
-
+	
 	public String getPublicAddress() {
 		return message.getPublicAddress();
 	}
@@ -45,7 +45,15 @@ public class ResponseStatus {
 	public String toString() {
 		return "ResponseStatus [status=" + status + ", message=" + message + "]";
 	}
+	
 
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
 	public void setStatus(String status) {
 		this.status = status;

@@ -3,6 +3,7 @@ package com.qualsure.dataapi.service;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,11 +61,21 @@ public class DegreeService {
 		return degreeDAO.findByUniversityIdAndId(universityId, degreeId);
 	}
 
-	public Degree addDegree(String universityId, String password, Map<String, String>  degreeDetails)   {
-		
+	public Map<String,String> addDegree(String universityId, String password, Map<String, String>  degreeDetails)   {
+
+		Map<String,String> endResponse = new HashMap<String,String>();
 		Users user= userService.findById(universityId);
+		if(user==null){
+			endResponse.put("status", "false");
+			endResponse.put("errorMessage", "university doesnt exist");
+			return endResponse;
+		}
 		if(!verifyLogin(user,password))
-			return null;
+		{
+			endResponse.put("status", "false");
+			endResponse.put("errorMessage", "Password is incorrect");
+			return endResponse;
+		}
 		
 		degreeDetails.put("universityId", universityId);
 		String hash = hashService.getHash(degreeDetails);
@@ -75,15 +86,22 @@ public class DegreeService {
 			if(!addDataCryptDegree(user,password,hash)){
 				newDegree.setStatus("Failed");
 				degreeDAO.insert(newDegree);
-				return null;
+				endResponse.put("status", "false");
+				endResponse.put("errorMessage", "Degree cannot be inserted in DataCrypt");
+				return endResponse;
 			}
 			newDegree.setStatus("Success");
 			degreeDAO.insert(newDegree);
-			return newDegree;
+			endResponse.put("status", "true");
+			endResponse.put("degreeId", newDegree.getId());
+			return endResponse;
 		}
 		newDegree.setStatus("Failed");
 		degreeDAO.insert(newDegree);
-		return null;
+		endResponse.put("status", "failed");
+		endResponse.put("errorMessage", "Degree already in QualSure");
+		return endResponse;
+		
 	}
 	
 	public boolean verifyLogin (Users user, String password) {
@@ -248,8 +266,10 @@ public class DegreeService {
 	}
 	
 
-	public String verifyDegree(String universityId, Map<String, String> degreeDetails) {
+	public  Map<String, String> verifyDegree(String universityId, Map<String, String> degreeDetails) {
 		
+		Map<String, String> endResponse = new HashMap<String,String>();
+
 		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
 
 		String studentName = degree.getStudentName();
@@ -272,26 +292,34 @@ public class DegreeService {
 	
 				for(int i=0;i<keys.length;i++) {
 					if(!returnedDegree.getDegreeDetails().get(keys[i]).equals(degree.getDegreeDetails().get(keys[i])) ) {
-						return null;
+						endResponse.put("status", "false");
+						endResponse.put("errorMessage", "Degree not verified in QualSure Database");
+						return endResponse;
 					}
 				}
 			
 		}
 		catch(NullPointerException e){
-			return null;
+			endResponse.put("status", "false");
+			endResponse.put("errorMessage", "Degree not found in QualSure Database");
+			return endResponse;
 		}
-		System.out.println("sdsdsdsdsdsdsd");
-		boolean rs=verifyDataCryptDegree(degree.getHash(),degree.getUniversityId());
+		String rs=verifyDataCryptDegree(degree.getHash(),degree.getUniversityId());
 		System.out.println(rs);
-
-		if(rs == false){
-			return null;
+		
+		if(rs == "true"){
+			endResponse.put("status", "true");
+			endResponse.put("degreeId", degreeId);
 		}
-		System.out.println(rs);
-		return degreeId;
+		else{
+			endResponse.put("status", "false");
+			endResponse.put("errorMessage", rs);
+		}
+		
+		return endResponse;
 	}
 	
-	public boolean verifyDataCryptDegree(String degreeHash,String universityId){
+	public String verifyDataCryptDegree(String degreeHash,String universityId){
 		try{
 	      	  RestTemplate restTemplate = new RestTemplate();
 			  HttpHeaders headers = new HttpHeaders();
@@ -310,19 +338,19 @@ public class DegreeService {
 		    	  Users user = userService.findById(universityId);
 		    	  if(user.getPublicAddress().equals(response.getOwner())){
 		    		  System.out.println("true------------------->>>> degree verified");
-		    		  return true;
+		    		  return "true";
 		    	  }
 		    	  else 
-		    		  return false;
+		    		  return "Degree not Anchored by this University";
 		      }
 		      else {
-		    	  return false;
+		    	  return "Degree not found in DataCrypt";
 		      }
 		}
 		catch (ResourceAccessException e) {
 	        System.out.println("Timed out");
-	        return false;
-	    }
+	        
+	        return "DataCrypt not Responding";	    }
 	}
 
 

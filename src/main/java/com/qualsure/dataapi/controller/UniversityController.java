@@ -63,18 +63,21 @@ public class UniversityController {
 
 //		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
 		System.out.println("in verify");
-		String degreeId=degreeService.verifyDegree(universityId, degreeDetails);
-		if(degreeId != null) {
-			System.out.println(degreeId);
-			Map<String,String> hm=new HashMap<String, String>();  
+		Map<String,String> hm=new HashMap<String, String>();  
+
+		Map<String, String> res=degreeService.verifyDegree(universityId, degreeDetails);
+		if(res.get("status").equals("true")) {
+			System.out.println(res.get("degreeId"));
 			hm.put("status", "Success");
-			hm.put("degreeId", degreeId );
-			return hm;
+			hm.put("degreeId", res.get("degreeId") );
 			
 		}
+		else{
+			hm.put("status", "false");
+			hm.put("errorMessage", res.get("errorMessage") );
+		}
 		System.out.println("2");
-
-		return Collections.singletonMap("status", "Failed");
+		return hm;
 		}
 		
 	
@@ -113,20 +116,20 @@ public class UniversityController {
 	//A POST Service should return a status of created (201)
 	//when the resource creation is successful.
 	@PostMapping("universities/{universityId}/degrees")
-	public ResponseEntity<?> addDegree(@PathVariable String universityId, @RequestBody Map<String, String> responseObj) {
+	public Map<String, String> addDegree(@PathVariable String universityId, @RequestBody Map<String, String> responseObj) {
 			
 		String password = responseObj.get("password");
 		responseObj.remove("password");
+		System.out.println(password);
+		Map<String, String> response= degreeService.addDegree(universityId, password, responseObj);
 		
-		Degree addedDegree= degreeService.addDegree(universityId, password, responseObj);
-		
-		 if (addedDegree == null)
-				return ResponseEntity.noContent().build();
-		 
-		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
-					"/{id}").buildAndExpand(addedDegree.getId()).toUri();
+//		 if (response.get("status").equals("false"))
+//				return response;	
+						
+//		 URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
+//					"/{id}").buildAndExpand(response.get("degreeId")).toUri();
 
-			return ResponseEntity.created(location).build();
+			return response;
 		 
 	}
 	

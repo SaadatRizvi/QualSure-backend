@@ -23,6 +23,7 @@ import net.sf.ehcache.Element;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -178,15 +179,16 @@ public class UsersService implements UserDetailsService {
 	public Users save(Users user) {
         return usersDAO.save(user);
     }
-	public Users addUser(Users user) throws Exception {
+	public  Map<String, String> addUser(Users user) throws Exception {
+		Map<String, String> endResponse = new HashMap<String,String>();
 		EncryptionService advancedEncryptionStandard = new EncryptionService();
 		String encryptionKey = user.getPassword();
 		user.setPassword(bcryptEncoder.encode(user.getPassword()));
-
+		
 		String randomPassword = randomPasswordGenerator();
 		ResponseStatus response=signUpDataCrypt(user.getUsername(),randomPassword,user.getEmail());
-		if(response != null){
-			if(response.getStatus().equals("true")){
+			
+		if(response.getStatus().equals("true")){
 				String key=getRequiredLength(encryptionKey);
 				System.out.println(key);
 				String plainText = randomPassword;
@@ -202,14 +204,16 @@ public class UsersService implements UserDetailsService {
 				Users muser = this.findOne(user.getUsername());
 				University university = new University(muser.getId(), muser.getName(), "True", formFieldDAO.findAll());
 				universityDAO.insert(university);
+				endResponse.put("status", "true");
+				endResponse.put("userId", muser.getId() );
 				
-				return user;
 			}
-		}
-		else {
-			return null; 
-		}
-		return null;
+			else{
+				endResponse.put("status", "false");
+				endResponse.put("errorMessage", response.getErrorMessage());
+			}
+			return endResponse;
+				
 	}
 	
 	public void addMultipleUsers(List<Users> users) throws Exception {
@@ -221,45 +225,101 @@ public class UsersService implements UserDetailsService {
 		
 	}
 
-	public boolean findIfAvailable(String username) {
+	public Map<String, String> findIfAvailable(String username) {
 		Users temp = this.findOne(username);
-		if(temp != null) return false;
-		return true;
+		Map<String, String> response= new HashMap<String,String>();
+
+		if(temp != null){
+			response.put("status","true");
+			response.put("success","false");
+
+			return response;
+		}
+		
+		
+		response = findIfAvailableDataCrypt(username);
+		
+		
+		return response;
 		
 	}
-	public ResponseStatus signUpDataCrypt(String userName, String password, String email) {
+	private Map<String, String> findIfAvailableDataCrypt(String username) {
+		// TODO Auto-generated method stub
+		Map<String,String> endResponse= new HashMap<String,String>();
 		try{
-        	  RestTemplate restTemplate = new RestTemplate();
+      	  RestTemplate restTemplate = new RestTemplate();
 			  HttpHeaders headers = new HttpHeaders();
 			  headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 			  
 			  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-			  map.add("username", userName);
-			  map.add("password", password);
-			  map.add("email", email);
+			  map.add("username", username);
 			  
-			  String url = "http://localhost:8090/user/createUser";
+			  String url = "http://192.168.100.28:8090/user/getByUsername";
 			  
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
 			  
 			  System.out.println(response.toString());
 		      if(response.getStatus().equals("true")){
-		    	  System.out.println("Data Cypt user created");
-		    	  return response;
+		    	  System.out.println("Already Exists");
+		    	  endResponse.put("status", "true");
+		    	  endResponse.put("success", "false");
+
 		      }
 		      else{
-		    	  System.out.println("user not created");
-		    	  return null;
+		    	  System.out.println("Not Exists");
+		    	  endResponse.put("status", "true");
+		    	  endResponse.put("success", "true");
+
 		      }
+		      return endResponse;
 	 } 	
 		catch (ResourceAccessException e) {
 	        System.out.println("Timed out");
-	        return null;
+	    	endResponse.put("status", "false");
+
+	    	endResponse.put("errorMessage", "DataCrypt not Responding");
+
+	        return endResponse;
+	    }
+
+	}
+
+	public ResponseStatus signUpDataCrypt(String username, String password, String email) {
+		ResponseStatus response = new ResponseStatus();
+		try{
+        	  RestTemplate restTemplate = new RestTemplate();
+			  HttpHeaders headers = new HttpHeaders();
+			  headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+			  
+			  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+			  map.add("username", username);
+			  map.add("password", password);
+			  map.add("email", email);
+			  
+			  String url = "http://192.168.100.28:8090/user/createUser";
+			  
+			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+			  response =  restTemplate.postForObject( url, request , ResponseStatus.class );
+			  
+			  System.out.println(response.toString());
+			  
+			  if(response.getStatus().equals("false")){
+				  response.setErrorMessage("User not created in DataCrypt");
+			  }
+			  return response;
+		      
+	 } 	
+		catch (ResourceAccessException e) {
+	        System.out.println("Timed out");
+//	        e.printStackTrace();
+	        response.setStatus("false");
+	    	response.setErrorMessage("DataCrypt Not Responding");
+	        return response;
 	    }
 
 		}
-	public String randomPasswordGenerator(){
+	public String randomPasswordGenerator(){	
 		
 	
 		char[] possibleCharacters = (new String("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")).toCharArray();
