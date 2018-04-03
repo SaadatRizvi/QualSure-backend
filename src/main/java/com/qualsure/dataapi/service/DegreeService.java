@@ -115,7 +115,7 @@ public class DegreeService {
 			return endResponse;
 		}
 		
-		endResponse.put("status", "Duplicate");
+		endResponse.put("status", "false");
 		endResponse.put("errorMessage", "Degree already in QualSure");
 		return endResponse;
 
