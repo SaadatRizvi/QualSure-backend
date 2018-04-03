@@ -109,7 +109,7 @@ public class AuthenticationController {
     
     @GetMapping("/checkUsername/{username}")
 	public Map<String, String> getAllUsers(@PathVariable String username) {
-		Map<String, String> response= new HashMap<String,String>();
+		Map<String, String> response= userService.findIfAvailable(username);
 		
 		
     	return response;

@@ -82,9 +82,10 @@ public class DegreeService {
 		String hash = hashService.getHash(degreeDetails);
 		List<Degree> degree = degreeDAO.findByHash(hash);
 		logger.info("Hash addDegree="+hash);
-		Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
-		degreeDAO.insert(newDegree);
+		
 		if(degree.isEmpty()){
+			Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
+			degreeDAO.insert(newDegree);
 			if(!addDataCryptDegree(user,password,hash)){
 				newDegree.setStatus("Failed");
 				logger.info("Failed1");
@@ -93,16 +94,15 @@ public class DegreeService {
 				endResponse.put("errorMessage", "Degree cannot be inserted in DataCrypt");
 				return endResponse;
 			}
+			
 			newDegree.setStatus("Success");
 			logger.info("Success");
+			this.updateDegree(newDegree);
 			endResponse.put("status", "true");
 			endResponse.put("degreeId", newDegree.getId());
 			return endResponse;
 		}
-		newDegree.setStatus("Failed");
-		logger.info("Failed2");
-
-		this.updateDegree(newDegree);
+		
 		endResponse.put("status", "failed");
 		endResponse.put("errorMessage", "Degree already in QualSure");
 		return endResponse;
