@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.qualsure.dataapi.config.JwtTokenUtil;
 import com.qualsure.dataapi.model.AuthToken;
 import com.qualsure.dataapi.model.LoginUser;
+import com.qualsure.dataapi.model.NetworkConfig;
 import com.qualsure.dataapi.model.Users;
 import com.qualsure.dataapi.service.UsersService;
 
@@ -44,6 +46,22 @@ public class AuthenticationController {
     @Autowired
     private UsersService userService;
 
+	@GetMapping("/getDataCryptIP")
+	public String getDataCryptIP() {
+			return NetworkConfig.getDatacryptIP();
+	}
+	
+	@PostMapping("/setDataCryptIP")
+	public String getDataCryptIP( @RequestBody Map<String, String>  IpAndPort) {
+		
+     	NetworkConfig.setDatacryptIP("http://"+IpAndPort.get("server"));
+
+			return NetworkConfig.getDatacryptIP();
+	}
+	
+	
+	
+	
     @RequestMapping(value = "/token/generate-token", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws Exception {
         System.out.println("casasheck111");

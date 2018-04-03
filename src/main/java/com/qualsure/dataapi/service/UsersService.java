@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.qualsure.dataapi.dao.FormFieldDAO;
 import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.dao.UsersDAO;
+import com.qualsure.dataapi.model.NetworkConfig;
 import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.University;
 import com.qualsure.dataapi.model.Users;
@@ -101,7 +102,7 @@ public class UsersService implements UserDetailsService {
 			  map.add("username", user.getUsername());
 			 
 			  
-			  String url = "http://localhost.100.28:8090/user/checkBalance";
+			  String url = NetworkConfig.getDatacryptIP()+"/user/checkBalance";
 			  
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
@@ -136,7 +137,7 @@ public class UsersService implements UserDetailsService {
 		  map.add("username", username);
 		  map.add("password", new String(decryptedCipherText, StandardCharsets.UTF_8));
 			  
-		  String url = "http://192.168.0.105:8090/authenticate";
+		  String url = NetworkConfig.getDatacryptIP()+"/authenticate";
 			   
 		  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 		  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
@@ -254,7 +255,9 @@ public class UsersService implements UserDetailsService {
 			  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
 			  map.add("username", username);
 			  
-			  String url = "http://192.168.100.28:8090/user/getByUsername";
+
+			  String url = NetworkConfig.getDatacryptIP()+"/user/getByUsername";
+
 			  
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
@@ -297,7 +300,7 @@ public class UsersService implements UserDetailsService {
 			  map.add("password", password);
 			  map.add("email", email);
 			  
-			  String url = "http://192.168.100.28:8090/user/createUser";
+			  String url = NetworkConfig.getDatacryptIP()+"/user/createUser";
 			  
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  response =  restTemplate.postForObject( url, request , ResponseStatus.class );

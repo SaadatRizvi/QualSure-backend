@@ -9,6 +9,7 @@ import com.qualsure.dataapi.DbSeeder;
 import com.qualsure.dataapi.dao.UniversityDAO;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.MultipleDegree;
+import com.qualsure.dataapi.model.NetworkConfig;
 import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.University;
 import com.qualsure.dataapi.model.Users;
@@ -55,7 +56,6 @@ public class UniversityController {
 	public University getFormFieldsByUniId(@PathVariable String universityId) {
 			return universitiesService.findFormFieldsByUniId(universityId);
 	}	
-
 	
 	@PostMapping("/universities/{universityId}/verifyDegree")
 	public  Map<String, String> verifyDegreeById(@PathVariable String universityId, @RequestBody Map<String, String> degreeDetails) {

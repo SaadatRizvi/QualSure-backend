@@ -27,6 +27,7 @@ import com.qualsure.dataapi.DbSeeder;
 import com.qualsure.dataapi.dao.DegreeDAO;
 import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.MultipleDegree;
+import com.qualsure.dataapi.model.NetworkConfig;
 import com.qualsure.dataapi.model.ResponseStatus;
 import com.qualsure.dataapi.model.Users;
 
@@ -80,28 +81,32 @@ public class DegreeService {
 		degreeDetails.put("universityId", universityId);
 		String hash = hashService.getHash(degreeDetails);
 		List<Degree> degree = degreeDAO.findByHash(hash);
+		logger.info("Hash addDegree="+hash);
 		Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
 		degreeDAO.insert(newDegree);
 		if(degree.isEmpty()){
 			if(!addDataCryptDegree(user,password,hash)){
 				newDegree.setStatus("Failed");
-				degreeDAO.insert(newDegree);
+				logger.info("Failed1");
+				this.updateDegree(newDegree);
 				endResponse.put("status", "false");
 				endResponse.put("errorMessage", "Degree cannot be inserted in DataCrypt");
 				return endResponse;
 			}
 			newDegree.setStatus("Success");
-			degreeDAO.insert(newDegree);
+			logger.info("Success");
 			endResponse.put("status", "true");
 			endResponse.put("degreeId", newDegree.getId());
 			return endResponse;
 		}
 		newDegree.setStatus("Failed");
-		degreeDAO.insert(newDegree);
+		logger.info("Failed2");
+
+		this.updateDegree(newDegree);
 		endResponse.put("status", "failed");
 		endResponse.put("errorMessage", "Degree already in QualSure");
 		return endResponse;
-		
+
 	}
 	
 	public boolean verifyLogin (Users user, String password) {
@@ -125,13 +130,13 @@ public class DegreeService {
 			List<Degree> degree = degreeDAO.findByHash(hash);
 			if(degree.isEmpty()){
 				Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
-				degreeDAO.insert(newDegree);
+				this.updateDegree(newDegree);
 				hashList.add(hash);
 			}
 			else{
 				hashListHashExistFailed.add(hash);
 				Degree newDegree = new Degree(universityId,degreeDetails, hash,"Failed");
-				degreeDAO.insert(newDegree);
+				this.updateDegree(newDegree);
 			}	
 		}
 		
@@ -187,7 +192,7 @@ public class DegreeService {
 			  headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 			  
 			  ObjectNode jsonBody = makeJson(user,password, hashList);
-			  String url = "http://localhost:8090/addMultipleFiles";
+			  String url = NetworkConfig.getDatacryptIP()+"/addMultipleFiles";
 				   
 			  System.out.println(jsonBody.toString());
 			  HttpEntity<String>request = new HttpEntity<>(jsonBody.toString(), headers);
@@ -221,7 +226,7 @@ public class DegreeService {
 			  map.add("username", user.getUsername());
 			  map.add("password",  new String(decryptedCipherText, StandardCharsets.UTF_8));  
 			  map.add("hash", hash);
-			  String url = "http://localhost:8090/addFile";
+			  String url = NetworkConfig.getDatacryptIP()+"/addFile";
 				   
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
@@ -328,7 +333,7 @@ public class DegreeService {
 			  MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
 			  map.add("hash", degreeHash);
 				  
-			  String url = "http://localhost:8090/verifyFile";
+			  String url = NetworkConfig.getDatacryptIP()+"/verifyFile";
 				   
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );

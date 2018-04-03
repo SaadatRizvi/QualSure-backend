@@ -7,4 +7,6 @@ public class Constants {
     public static final String SIGNING_KEY = "QualSure";
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
+    public static final String DATACRYPT_URL = "http://192.168.100.28:8090";
+
 }
