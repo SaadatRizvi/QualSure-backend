@@ -29,6 +29,7 @@ import com.qualsure.dataapi.model.Degree;
 import com.qualsure.dataapi.model.MultipleDegree;
 import com.qualsure.dataapi.model.NetworkConfig;
 import com.qualsure.dataapi.model.ResponseStatus;
+import com.qualsure.dataapi.model.University;
 import com.qualsure.dataapi.model.Users;
 
 @Service
@@ -43,6 +44,8 @@ public class DegreeService {
 	@Autowired
     private UsersService userService;
 	
+	@Autowired
+    private UniversitiesService univsersityService;
 	
 	@Autowired
 	private HashService hashService;
@@ -64,6 +67,13 @@ public class DegreeService {
 
 	public Map<String,String> addDegree(String universityId, String password, Map<String, String>  degreeDetails)   {
 
+		University university = this.univsersityService.getUniversities(universityId);
+		
+		if(university.getFirstTime().equals("True")) {
+		university.setFirstTime("False");
+		this.univsersityService.updateUniversities(university);
+		}
+	
 		Map<String,String> endResponse = new HashMap<String,String>();
 		Users user= userService.findById(universityId);
 		if(user==null){
@@ -129,6 +139,13 @@ public class DegreeService {
 		Users user= userService.findById(universityId);
 		if(!verifyLogin(user,responseObj.getPassword()))
 			return null;
+		
+		University university = this.univsersityService.getUniversities(universityId);
+		
+		if(university.getFirstTime().equals("True")) {
+		university.setFirstTime("False");
+		this.univsersityService.updateUniversities(university);
+		}
 		
 		List<String> hashList = new ArrayList<String>();
 		List<String> hashListHashExistFailed = new ArrayList<String>();
