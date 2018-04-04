@@ -103,7 +103,7 @@ public class DegreeService {
 			return endResponse;
 		}
 		
-		endResponse.put("status", "failed");
+		endResponse.put("status", "false");
 		endResponse.put("errorMessage", "Degree already in QualSure");
 		return endResponse;
 

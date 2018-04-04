@@ -64,7 +64,9 @@ public class AuthenticationController {
 	
     @RequestMapping(value = "/token/generate-token", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws Exception {
-        System.out.println("casasheck111");
+       String username= loginUser.getUsername().toLowerCase();
+       loginUser.setUsername(username);
+    	System.out.println("casasheck111");
         System.out.println(loginUser.getPassword());
 
         final Authentication authentication = authenticationManager.authenticate(
@@ -91,6 +93,8 @@ public class AuthenticationController {
     
     @RequestMapping(value="/signup", method = RequestMethod.POST)
     public ResponseEntity<?> Signup(@RequestBody Users user) throws Exception {
+    	String username = user.getUsername().toLowerCase();
+    	user.setUsername(username);
     	Map<String, String> response= userService.addUser(user);
     	if(response.get("status").equals("false")){
     		return ResponseEntity.status(500).body(response);
@@ -109,6 +113,7 @@ public class AuthenticationController {
     
     @GetMapping("/checkUsername/{username}")
 	public Map<String, String> getAllUsers(@PathVariable String username) {
+    	username=username.toLowerCase();
 		Map<String, String> response= userService.findIfAvailable(username);
 		
 		
