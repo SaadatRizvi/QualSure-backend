@@ -83,7 +83,7 @@ public class DegreeService {
 		List<Degree> degree = degreeDAO.findByHash(hash);
 		logger.info("Hash addDegree="+hash);
 		
-		if(degree.isEmpty()){
+		if(degree.isEmpty() || degree.get(0).getStatus().equals("false")){
 			Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
 			degreeDAO.insert(newDegree);
 			if(!addDataCryptDegree(user,password,hash)){
