@@ -81,6 +81,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers("/hello").permitAll()
 			.antMatchers("/getDataCryptIP").permitAll()
 			.antMatchers("/setDataCryptIP").permitAll()
+			
+			.antMatchers("/resetDB").permitAll()
+
 			.antMatchers("/socket","/socket/**").permitAll()
 			.antMatchers("/universities","/universities/**").permitAll()
 			.antMatchers("/validators","/validators/*").permitAll()

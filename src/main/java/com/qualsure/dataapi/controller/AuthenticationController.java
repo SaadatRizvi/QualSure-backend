@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.qualsure.dataapi.config.JwtTokenUtil;
+import com.qualsure.dataapi.dao.DegreeDAO;
+import com.qualsure.dataapi.dao.UniversityDAO;
+import com.qualsure.dataapi.dao.UsersDAO;
 import com.qualsure.dataapi.model.AuthToken;
 import com.qualsure.dataapi.model.LoginUser;
 import com.qualsure.dataapi.model.NetworkConfig;
@@ -45,10 +48,29 @@ public class AuthenticationController {
 
     @Autowired
     private UsersService userService;
+    
+	@Autowired	
+	private DegreeDAO degreeDAO;
+	@Autowired	
+	private UniversityDAO universityDAO;
+	@Autowired
+	private UsersDAO usersDAO;
 
 	@GetMapping("/getDataCryptIP")
 	public String getDataCryptIP() {
 			return NetworkConfig.getDatacryptIP();
+	}
+	
+	@GetMapping("/resetDB")
+	public Map<String,String> resetDB() {
+		
+		this.degreeDAO.deleteAll();
+		this.usersDAO.deleteAll();
+		this.universityDAO.deleteAll();
+
+		
+		
+			return Collections.singletonMap("Status", "True");
 	}
 	
 	@PostMapping("/setDataCryptIP")

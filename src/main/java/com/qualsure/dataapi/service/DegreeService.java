@@ -154,26 +154,35 @@ public class DegreeService {
 
 
 		for(Map<String,String> degreeDetails: responseObj.getDegreeDetails()){
+			
 			degreeDetails.put("universityId", universityId);
 			String hash = hashService.getHash(degreeDetails);
-			List<Degree> degree = degreeDAO.findByHash(hash);
-			if(degree.isEmpty()){
+				
+			String studentName = degreeDetails.get("studentName");
+			String gpa = degreeDetails.get("gpa");
+			String graduationYear = degreeDetails.get("graduationYear");
+			String degreeType = degreeDetails.get("degreeType");
+			String degreeName = degreeDetails.get("degreeName");
+			String CNIC = degreeDetails.get("CNIC");
+			
+			Degree degree = degreeDAO.findByFixedFields(universityId, studentName, gpa, graduationYear, degreeType, degreeName,CNIC,"Success");
+						
+			if(degree == null){
 				Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
-				this.updateDegree(newDegree);
+				this.degreeDAO.insert(newDegree);
 				hashList.add(hash);
 			}
 			else{
 				hashListHashExistFailed.add(hash);
-				Degree newDegree = new Degree(universityId,degreeDetails, hash,"Failed");
-				this.updateDegree(newDegree);
+				
 			}	
 		}
 		
-		Map<String,String> response = addDataCryptMultipleDegree(user, responseObj.getPassword(), hashList);
+		Map<String,Boolean> response = addDataCryptMultipleDegree(user, responseObj.getPassword(), hashList);
 		
-		for (Map.Entry<String, String> entry : response.entrySet())
+		for (Map.Entry<String, Boolean> entry : response.entrySet())
 		{
-		    System.out.println(entry.getKey() + "/" + entry.getValue());
+		   // System.out.println(entry.getKey() + "/" + entry.getValue());
 		    if(entry.getValue().equals("false")){
 		    	hashListDataCryptFailed.add(entry.getKey());
 				List<Degree> degree = degreeDAO.findByHash(entry.getKey());
@@ -213,12 +222,12 @@ public class DegreeService {
 	    return jsonBody;
 	}
 	
-	public Map<String,String> addDataCryptMultipleDegree(Users user, String password, List<String> hashList){
+	public Map<String,Boolean> addDataCryptMultipleDegree(Users user, String password, List<String> hashList){
 		
 		try{
 	      	  RestTemplate restTemplate = new RestTemplate();
 			  HttpHeaders headers = new HttpHeaders();
-			  headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+			  headers.setContentType(MediaType.APPLICATION_JSON);
 			  
 			  ObjectNode jsonBody = makeJson(user,password, hashList);
 			  String url = NetworkConfig.getDatacryptIP()+"/addMultipleFiles";
@@ -227,7 +236,7 @@ public class DegreeService {
 			  HttpEntity<String>request = new HttpEntity<>(jsonBody.toString(), headers);
 			  
 			  @SuppressWarnings("unchecked")    // Possible error here
-			  Map<String,String> response =  restTemplate.postForObject( url, request , HashMap.class );
+			  Map<String,Boolean> response =  restTemplate.postForObject( url, request , HashMap.class );
 			  
 			  System.out.println(response.toString());
 			  return response;
