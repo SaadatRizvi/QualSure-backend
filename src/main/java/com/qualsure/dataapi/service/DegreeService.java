@@ -80,10 +80,22 @@ public class DegreeService {
 		
 		degreeDetails.put("universityId", universityId);
 		String hash = hashService.getHash(degreeDetails);
-		List<Degree> degree = degreeDAO.findByHash(hash);
+		
+
+		String studentName = degreeDetails.get("studentName");
+		String gpa = degreeDetails.get("gpa");
+		String graduationYear = degreeDetails.get("graduationYear");
+		String degreeType = degreeDetails.get("degreeType");
+		String degreeName = degreeDetails.get("degreeName");
+		String CNIC = degreeDetails.get("CNIC");
+		
+		Degree degree = degreeDAO.findByFixedFields(universityId, studentName, gpa, graduationYear, degreeType, degreeName,CNIC,"Success");
+		
+		
+	//	List<Degree> degree = degreeDAO.findByHash(hash);
 		logger.info("Hash addDegree="+hash);
 		
-		if(degree.isEmpty() || degree.get(0).getStatus().equals("false")){
+		if(degree == null){
 			Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
 			degreeDAO.insert(newDegree);
 			if(!addDataCryptDegree(user,password,hash)){
