@@ -136,11 +136,10 @@ public class UniversityController {
 	
 	
 	@PostMapping("universities/{universityId}/multipleDegrees")
-	public List<List<String>> multipleAddDegree(@PathVariable String universityId, @RequestBody MultipleDegree responseObj) {
+	public Map<String, String> multipleAddDegree(@PathVariable String universityId, @RequestBody MultipleDegree responseObj) {
 					
-		List<List<String>> listOLists= degreeService.addMultipleDegree(universityId, responseObj);
-
-			return listOLists;
+		Map<String, String> response= degreeService.addMultipleDegree(universityId, responseObj);
+			return response;
 		 
 	}
 	

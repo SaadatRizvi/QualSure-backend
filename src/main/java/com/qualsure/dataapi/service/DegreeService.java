@@ -135,10 +135,16 @@ public class DegreeService {
 		return encoder.matches(password, user.getPassword());
 	}
 	
-	public List<List<String>> addMultipleDegree(String universityId, MultipleDegree responseObj) {
+	public Map<String, String> addMultipleDegree(String universityId, MultipleDegree responseObj) {
+		Map<String, String> endResponse = new HashMap<String,String>();
+
 		Users user= userService.findById(universityId);
 		if(!verifyLogin(user,responseObj.getPassword()))
-			return null;
+		{
+			endResponse.put("status", "false");
+			endResponse.put("errorMessage", "Password is incorrect");
+			return endResponse;
+		}
 		
 		University university = this.univsersityService.getUniversities(universityId);
 		
@@ -168,7 +174,7 @@ public class DegreeService {
 			Degree degree = degreeDAO.findByFixedFields(universityId, studentName, gpa, graduationYear, degreeType, degreeName,CNIC,"Success");
 						
 			if(degree == null){
-				Degree newDegree = new Degree(universityId,degreeDetails, hash,"Pending");
+				Degree newDegree = new Degree(universityId,degreeDetails, hash,"Failed");
 				this.degreeDAO.insert(newDegree);
 				hashList.add(hash);
 			}
@@ -178,33 +184,44 @@ public class DegreeService {
 			}	
 		}
 		
-		Map<String,Boolean> response = addDataCryptMultipleDegree(user, responseObj.getPassword(), hashList);
-		
-		for (Map.Entry<String, Boolean> entry : response.entrySet())
-		{
-		   // System.out.println(entry.getKey() + "/" + entry.getValue());
-		    if(entry.getValue().equals("false")){
-		    	hashListDataCryptFailed.add(entry.getKey());
-				List<Degree> degree = degreeDAO.findByHash(entry.getKey());
-				degree.get(0).setStatus("Failed");
-				this.updateDegree(degree.get(0));
-		    }
-		    else{
-		    	hashListSuccess.add(entry.getKey());
-				List<Degree> degree = degreeDAO.findByHash(entry.getKey());
-				degree.get(0).setStatus("Success");
-				this.updateDegree(degree.get(0));
-		    }
+		Map<String, String> response = addDataCryptMultipleDegree(user, responseObj.getPassword(), hashList);
+		if(response.get("status").equals("false")){
+			endResponse.put("status", "false");
+			endResponse.put("errorMessage", response.get("errorMessage"));
+			return endResponse;
 		}
-		
-		List<List<String>> listOLists = new ArrayList<List<String>>();
-		
-		listOLists.add(hashListHashExistFailed);
-		listOLists.add(hashListDataCryptFailed);
-		listOLists.add(hashListSuccess);
-
-				
-		return listOLists; 
+		else{
+			for (Map.Entry<String, String> entry : response.entrySet())
+			{
+			   // System.out.println(entry.getKey() + "/" + entry.getValue());
+				if(entry.getKey().equals("status")){
+					
+				}
+				else{
+				    if(entry.getValue().equals("false")){
+				    	hashListDataCryptFailed.add(entry.getKey());
+						List<Degree> degree = degreeDAO.findByHash(entry.getKey());
+						degree.get(0).setStatus("Failed");
+						this.updateDegree(degree.get(0));
+				    }
+				    else{
+				    	hashListSuccess.add(entry.getKey());
+						List<Degree> degree = degreeDAO.findByHash(entry.getKey());
+						degree.get(0).setStatus("Success");
+						this.updateDegree(degree.get(0));
+				    }
+				}
+			}
+			
+			List<List<String>> listOLists = new ArrayList<List<String>>();
+			
+			listOLists.add(hashListHashExistFailed);
+			listOLists.add(hashListDataCryptFailed);
+			listOLists.add(hashListSuccess);
+			endResponse.put("status", "true");
+					
+			return endResponse; 
+		}
 	}
 	
 	public ObjectNode makeJson(Users user, String password, List<String> hashList){
@@ -222,8 +239,9 @@ public class DegreeService {
 	    return jsonBody;
 	}
 	
-	public Map<String,Boolean> addDataCryptMultipleDegree(Users user, String password, List<String> hashList){
-		
+	public Map<String, String> addDataCryptMultipleDegree(Users user, String password, List<String> hashList){
+		Map<String, String> endResponse = new HashMap<String,String>();
+
 		try{
 	      	  RestTemplate restTemplate = new RestTemplate();
 			  HttpHeaders headers = new HttpHeaders();
@@ -239,12 +257,24 @@ public class DegreeService {
 			  Map<String,Boolean> response =  restTemplate.postForObject( url, request , HashMap.class );
 			  
 			  System.out.println(response.toString());
-			  return response;
+			  endResponse.put("status", "true");
+			  for (Map.Entry<String, Boolean> entry : response.entrySet())
+				{
+				  if(entry.getValue()){
+					  endResponse.put(entry.getKey(), "true");
+				  }
+				  else{
+					  endResponse.put(entry.getKey(), "false");
+				  }
+				}
+			  return endResponse;
 		}
 		catch (ResourceAccessException e) {
 	        System.out.println("Timed out");
 	        e.printStackTrace();
-	        return null;
+	        endResponse.put("status", "false");
+	        endResponse.put("errorMessage", "DataCrypt not Responding");
+	        return endResponse;
 	    }	
 		
 	}
