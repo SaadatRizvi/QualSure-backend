@@ -56,16 +56,16 @@ public class DbSeeder implements ApplicationRunner {
 	private static List<Validator> validators = new ArrayList<>(
 			Arrays.asList(
 			new Validator("1","None", "","none"),
-		    new Validator("2","Alpha", "^[a-zA-Z]*$","text"),
+		    new Validator("2","Alpha", "^[a-zA-Z ]*$","text"),
 //		    new Validator("3","Alpha Required", "[a-zA-z]+","text"),
-		    new Validator("3","Alphanumeric", "^[a-zA-Z0-9]*$","text"),
+		    new Validator("3","Alphanumeric", "^[a-zA-Z0-9 ]*$","text"),
 //		    new Validator("5","Alphanumeric Required", "[a-zA-z0-9]+","text"),
 		            new Validator("4","Numeric", "^[0-9]*$","number"),
 //		            new Validator("7","Numeric Required", "[0-9]+","number"),
 		            new Validator("5","Float", "^[0-9]*[.]?[0-9]*$","number"),
 //		            new Validator("9","Float Required", "[0-9]*[.]?[0-9]+","number")
-		            new Validator("6","CNIC", "^([0-9]{5}-[0-9]{7}-[0-9])$","cnic"),
-			new Validator("7","Range", "[0-9]+","number")
+		            new Validator("6","CNIC", "^([0-9]{5}-[0-9]{7}-[0-9])$","cnic")
+		//	new Validator("7","Range", "[0-9]+","number")
 
 
 			));
