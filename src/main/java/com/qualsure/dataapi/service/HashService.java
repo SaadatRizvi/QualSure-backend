@@ -29,7 +29,6 @@ public class HashService {
 		byte[] encodedHash = digest.digest(
 				degreeString.getBytes(StandardCharsets.UTF_8));
 			
-		System.out.println("EncodedHash: "+ new String(encodedHash));
 		
 		byte[] hash = encodedHash;
 		StringBuffer hexString = new StringBuffer();

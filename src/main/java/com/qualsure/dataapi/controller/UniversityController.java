@@ -62,12 +62,10 @@ public class UniversityController {
 		
 
 //		Degree degree = new Degree(universityId,degreeDetails,"tempHash");
-		System.out.println("in verify");
 		Map<String,String> hm=new HashMap<String, String>();  
 
 		Map<String, String> res=degreeService.verifyDegree(universityId, degreeDetails);
 		if(res.get("status").equals("true")) {
-			System.out.println(res.get("degreeId"));
 			hm.put("status", "Success");
 			hm.put("degreeId", res.get("degreeId") );
 			
@@ -76,7 +74,6 @@ public class UniversityController {
 			hm.put("status", "false");
 			hm.put("errorMessage", res.get("errorMessage") );
 		}
-		System.out.println("2");
 		return hm;
 		}
 		
@@ -120,7 +117,6 @@ public class UniversityController {
 			
 		String password = responseObj.get("password");
 		responseObj.remove("password");
-		System.out.println(password);
 		Map<String, String> response= degreeService.addDegree(universityId, password, responseObj);
 		
 //		 if (response.get("status").equals("false"))

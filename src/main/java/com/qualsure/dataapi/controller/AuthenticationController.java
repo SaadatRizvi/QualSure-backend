@@ -88,8 +88,6 @@ public class AuthenticationController {
     public ResponseEntity<?> register(@RequestBody LoginUser loginUser) throws Exception {
        String username= loginUser.getUsername().toLowerCase();
        loginUser.setUsername(username);
-    	System.out.println("casasheck111");
-        System.out.println(loginUser.getPassword());
 
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -98,7 +96,6 @@ public class AuthenticationController {
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println(loginUser.getPassword());
         final Users user = userService.findOne(loginUser.getUsername());
         final String token = jwtTokenUtil.generateToken(user);
         HttpHeaders headers = new HttpHeaders();

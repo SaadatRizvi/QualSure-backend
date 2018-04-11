@@ -107,18 +107,14 @@ public class UsersService implements UserDetailsService {
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
 			  
-			  System.out.println(response.toString());
 		      if(response.getStatus().equals("true")){
-		    	  System.out.println("balance" + response.getMessage());
 		    	  return response;
 		      }
 		      else{
-		    	  System.out.println("user not created");
 		    	  return null;
 		      }
 	 } 	
 		catch (ResourceAccessException e) {
-	        System.out.println("Timed out");
 	        return null;
 	    }
 
@@ -126,8 +122,6 @@ public class UsersService implements UserDetailsService {
 	public boolean signInDataCrypt(String username, String password, byte[] cipherText) throws Exception{
 		byte[] decryptedCipherText = decryptPassword(password, cipherText);
 		Cache cache = cm.getCache("cache1");
-		System.out.println(new String(cipherText, StandardCharsets.UTF_8));
-		System.out.println(new String(decryptedCipherText, StandardCharsets.UTF_8));
 		try{
       	  RestTemplate restTemplate = new RestTemplate();
 		  HttpHeaders headers = new HttpHeaders();
@@ -142,26 +136,20 @@ public class UsersService implements UserDetailsService {
 		  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 		  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
 			  
-		  System.out.println(response.toString());
 	      if(response.getStatus().equals("true")){
-	    	  System.out.println("Data Cypt user logged in ");
 	    	  //cache.put(new Element("token",response.getToken()));
 	    	  //Element ele = cache.get("token");
 	  		
 	  		  //6. Print out the element
 	  		  //String output = (ele == null ? null : ele.getObjectValue().toString());
-	  		  //System.out.println(output);
 //	    	  cach.setMyCache("token",response.getToken());
-//	    	  System.out.println(cach.getMyCache("token"));
 	    	  return true;
 	      }
 	      else{
-	    	  System.out.println("user not logged in");
 	    	  return false;
 	      }
 	 } 	
 		catch (ResourceAccessException e) {
-	        System.out.println("Timed out");
 	        return false;
 	    }
 
@@ -191,14 +179,11 @@ public class UsersService implements UserDetailsService {
 			
 		if(response.getStatus().equals("true")){
 				String key=getRequiredLength(encryptionKey);
-				System.out.println(key);
 				String plainText = randomPassword;
 				advancedEncryptionStandard.setKey(key.getBytes(StandardCharsets.UTF_8));
 				byte[] cipherText = advancedEncryptionStandard.encrypt(plainText.getBytes(StandardCharsets.UTF_8));
 				byte[] decryptedCipherText = advancedEncryptionStandard.decrypt(cipherText);
-				System.out.println(new String(plainText));
-				System.out.println(new String(cipherText));
-				System.out.println(new String(decryptedCipherText));
+				
 				user.setDataCryptPassword(cipherText);
 				user.setPublicAddress(response.getPublicAddress());
 				usersDAO.insert(user);
@@ -262,15 +247,12 @@ public class UsersService implements UserDetailsService {
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
 			  
-			  System.out.println(response.toString());
 		      if(response.getStatus().equals("true")){
-		    	  System.out.println("Already Exists");
 		    	  endResponse.put("status", "true");
 		    	  endResponse.put("success", "false");
 
 		      }
 		      else{
-		    	  System.out.println("Not Exists");
 		    	  endResponse.put("status", "true");
 		    	  endResponse.put("success", "true");
 
@@ -278,7 +260,6 @@ public class UsersService implements UserDetailsService {
 		      return endResponse;
 	 } 	
 		catch (ResourceAccessException e) {
-	        System.out.println("Timed out");
 	    	endResponse.put("status", "false");
 
 	    	endResponse.put("errorMessage", "DataCrypt not Responding");
@@ -305,7 +286,6 @@ public class UsersService implements UserDetailsService {
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  response =  restTemplate.postForObject( url, request , ResponseStatus.class );
 			  
-			  System.out.println(response.toString());
 			  
 			  if(response.getStatus().equals("false")){
 				  response.setErrorMessage("User not created in DataCrypt");
@@ -314,7 +294,6 @@ public class UsersService implements UserDetailsService {
 		      
 	 } 	
 		catch (ResourceAccessException e) {
-	        System.out.println("Timed out");
 //	        e.printStackTrace();
 	        response.setStatus("false");
 	    	response.setErrorMessage("DataCrypt Not Responding");
@@ -327,7 +306,6 @@ public class UsersService implements UserDetailsService {
 	
 		char[] possibleCharacters = (new String("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")).toCharArray();
 		String randomStr = RandomStringUtils.random( 24, 0, possibleCharacters.length-1, false, false, possibleCharacters, new SecureRandom() );
-		System.out.println( randomStr );
 		return randomStr;
 	}
 	

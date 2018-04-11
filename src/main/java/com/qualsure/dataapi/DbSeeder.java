@@ -153,14 +153,12 @@ public class DbSeeder implements ApplicationRunner {
 	     logger.info("CmdArg server =" + args.getOptionValues("server"));
 
 	     if(args.getOptionValues("server") == null) {
-	     	NetworkConfig.setDatacryptIP("http://192.168.100.28:8090");
+	     	NetworkConfig.setDatacryptIP("http://localhost:8090");
 	     }
 	     else {
 	     	NetworkConfig.setDatacryptIP("http://"+args.getOptionValues("server").get(0));
 	     }
-    //	System.out.println("YOLOYOYOYOYOLYOYOY");
 	     logger.info("DataCrypt Server IP set to " + NetworkConfig.getDatacryptIP());
-    //	System.out.println("YOLOYOYOYOYOLYOYOY");
 
     	
 //		  List<University> universities = new ArrayList<>(Arrays.asList(

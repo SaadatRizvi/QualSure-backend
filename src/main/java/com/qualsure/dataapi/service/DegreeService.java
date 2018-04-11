@@ -193,7 +193,6 @@ public class DegreeService {
 		else{
 			for (Map.Entry<String, String> entry : response.entrySet())
 			{
-			   // System.out.println(entry.getKey() + "/" + entry.getValue());
 				if(entry.getKey().equals("status")){
 					
 				}
@@ -250,13 +249,11 @@ public class DegreeService {
 			  ObjectNode jsonBody = makeJson(user,password, hashList);
 			  String url = NetworkConfig.getDatacryptIP()+"/addMultipleFiles";
 				   
-			  System.out.println(jsonBody.toString());
 			  HttpEntity<String>request = new HttpEntity<>(jsonBody.toString(), headers);
 			  
 			  @SuppressWarnings("unchecked")    // Possible error here
 			  Map<String,Boolean> response =  restTemplate.postForObject( url, request , HashMap.class );
 			  
-			  System.out.println(response.toString());
 			  endResponse.put("status", "true");
 			  for (Map.Entry<String, Boolean> entry : response.entrySet())
 				{
@@ -270,7 +267,6 @@ public class DegreeService {
 			  return endResponse;
 		}
 		catch (ResourceAccessException e) {
-	        System.out.println("Timed out");
 	        e.printStackTrace();
 	        endResponse.put("status", "false");
 	        endResponse.put("errorMessage", "DataCrypt not Responding");
@@ -299,7 +295,6 @@ public class DegreeService {
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
 				  
-			  System.out.println(response.toString());
 		      if(response.getStatus().equals("true")){
 		    	 return true;
 		      }
@@ -308,7 +303,6 @@ public class DegreeService {
 		      }
 		}
 		catch (ResourceAccessException e) {
-	        System.out.println("Timed out");
 	        return false;
 	    }
 	}
@@ -357,11 +351,9 @@ public class DegreeService {
 		try{
 			Degree returnedDegree= degreeDAO.findByFixedFields(universityId, studentName, gpa, graduationYear, degreeType, degreeName,CNIC,"Success");
 
-			System.out.println("step1");
 			degreeId = returnedDegree.getId();
 
 			String[] keys = returnedDegree.getDegreeDetails().keySet().toArray(new String[0]);
-			System.out.println("step2");
 	
 				for(int i=0;i<keys.length;i++) {
 					if(!returnedDegree.getDegreeDetails().get(keys[i]).equals(degree.getDegreeDetails().get(keys[i])) ) {
@@ -378,7 +370,6 @@ public class DegreeService {
 			return endResponse;
 		}
 		String rs=verifyDataCryptDegree(degree.getHash(),degree.getUniversityId());
-		System.out.println(rs);
 		
 		if(rs == "true"){
 			endResponse.put("status", "true");
@@ -406,11 +397,9 @@ public class DegreeService {
 			  HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 			  ResponseStatus response =  restTemplate.postForObject( url, request , ResponseStatus.class );
 				  
-			  System.out.println(response.toString());
 		      if(response.getStatus().equals("true")){
 		    	  Users user = userService.findById(universityId);
 		    	  if(user.getPublicAddress().equals(response.getOwner())){
-		    		  System.out.println("true------------------->>>> degree verified");
 		    		  return "true";
 		    	  }
 		    	  else 
@@ -421,7 +410,6 @@ public class DegreeService {
 		      }
 		}
 		catch (ResourceAccessException e) {
-	        System.out.println("Timed out");
 	        
 	        return "DataCrypt not Responding";	    }
 	}
